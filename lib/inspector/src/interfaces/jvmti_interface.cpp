@@ -1,5 +1,6 @@
 #include "./jvmti_interface.hpp"
 #include "utility/jni_errors.hpp"
+#include "jvmti_interface.hpp"
 
 inspector::interfaces::JvmtiInterface::JvmtiInterface( JavaVM* jvm )
 {
@@ -26,7 +27,7 @@ inspector::interfaces::JvmtiInterface::~JvmtiInterface( )
  
 bool inspector::interfaces::JvmtiInterface::initialize( )
 {
-    
+    return true;
 }
 
 bool inspector::interfaces::JvmtiInterface::destroy()
@@ -95,7 +96,10 @@ bool inspector::interfaces::JvmtiInterface::get_classloader_classes( void* class
     jclass* class_ptr = nullptr;
 
     /* Get all loaded classes via jvmti */
-    jvmtiError error = this->_jvmti_env->GetClassLoaderClasses( reinterpret_cast<jobject>( classloader ), &class_count, &class_ptr );
+    jvmtiError error = this->_jvmti_env->GetClassLoaderClasses( reinterpret_cast<jobject>( classloader ),
+        &class_count,
+        &class_ptr 
+    );
     /* Error handling */
     if( error != JVMTI_ERROR_NONE )
     {
@@ -129,7 +133,10 @@ bool inspector::interfaces::JvmtiInterface::get_class_signature( void* class_, s
     char* generic_ptr_ptr = nullptr;
 
     /* Get class signature */
-    jvmtiError error = this->_jvmti_env->GetClassSignature( reinterpret_cast<jclass>( class_ ), &signature_ptr, &generic_ptr_ptr );
+    jvmtiError error = this->_jvmti_env->GetClassSignature( reinterpret_cast<jclass>( class_ ), 
+        &signature_ptr,
+        &generic_ptr_ptr 
+    );
     /* Error handling */
     if( error != JVMTI_ERROR_NONE )
     {
@@ -148,3 +155,328 @@ bool inspector::interfaces::JvmtiInterface::get_class_signature( void* class_, s
     return true;
 }
 
+bool inspector::interfaces::JvmtiInterface::get_class_status( void* class_, std::int16_t& status )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Get class status */
+    jvmtiError error = this->_jvmti_env->GetClassStatus( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jint*>( &status ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_source_file_name( void* class_, std::string& source_file_name )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    char* source_file_ptr = nullptr;
+
+    /* Get class signature */
+    jvmtiError error = this->_jvmti_env->GetSourceFileName( reinterpret_cast<jclass>( class_ ), 
+        &source_file_ptr
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Set our strings */
+    source_file_name = std::string( source_file_ptr );
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( source_file_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_modifiers( void *class_, std::int32_t &modifiers )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get class modifiers */
+    jvmtiError error = this->_jvmti_env->GetClassModifiers( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jint*>( &modifiers ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_methods( void* class_, std::vector<void*>& methods )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jint method_count = 0;
+    jmethodID* method_ptr = nullptr;
+
+    /* Get all loaded classes via jvmti */
+    jvmtiError error = this->_jvmti_env->GetClassMethods( reinterpret_cast<jclass>( class_ ), 
+        &method_count,
+        &method_ptr 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    methods.reserve( method_count );
+    for( auto i = 0; i < method_count; i++ )
+    {
+        methods.emplace_back( method_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( method_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_fields( void* class_, std::vector<void*>& fields )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jint field_count = 0;
+    jfieldID* field_ptr = nullptr;
+
+    /* Get all loaded classes via jvmti */
+    jvmtiError error = this->_jvmti_env->GetClassFields( reinterpret_cast<jclass>( class_ ), 
+        &field_count,
+        &field_ptr 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    fields.reserve( field_count );
+    for( auto i = 0; i < field_count; i++ )
+    {
+        fields.emplace_back( field_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( field_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_interfaces( void* class_, std::vector<void*>& interfaces )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jint interface_count = 0;
+    jclass* interface_ptr = nullptr;
+
+    /* Get all loaded classes via jvmti */
+    jvmtiError error = this->_jvmti_env->GetImplementedInterfaces( reinterpret_cast<jclass>( class_ ), 
+        &interface_count,
+        &interface_ptr 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    interfaces.reserve( interface_count );
+    for( auto i = 0; i < interface_count; i++ )
+    {
+        interfaces.emplace_back( interface_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( interface_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_version( void* class_, std::int32_t& minor, std::int32_t& major )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get class version */
+    jvmtiError error = this->_jvmti_env->GetClassVersionNumbers( 
+        reinterpret_cast<jclass>( class_ ),
+        reinterpret_cast<jint*>( &minor ), 
+        reinterpret_cast<jint*>( &major ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_constant_pool( void* class_, std::vector<unsigned char>& constant_pool )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    jint constant_pool_count = 0;
+    jint constant_pool_byte_count = 0;
+    unsigned char* constant_pool_bytes_ptr = nullptr;
+
+    /* Get all loaded classes via jvmti */
+    jvmtiError error = this->_jvmti_env->GetConstantPool( reinterpret_cast<jclass>( class_ ), 
+        &constant_pool_count,
+        &constant_pool_byte_count,
+        &constant_pool_bytes_ptr
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    /* Reserve space on our vector */
+    constant_pool.reserve( constant_pool_count );
+    for( auto i = 0; i < constant_pool_count; i++ )
+    {
+        constant_pool.emplace_back( constant_pool_bytes_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( constant_pool_bytes_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_is_interface( void* class_, bool& is_interface )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get class is interface */
+    jvmtiError error = this->_jvmti_env->IsInterface( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jboolean*>( &is_interface ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_is_array( void* class_, bool& is_array )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get class is array */
+    jvmtiError error = this->_jvmti_env->IsArrayClass( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jboolean*>( &is_array ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_class_loader( void* class_, void*& class_loader )
+{
+    /* Ensure class is valid */
+    if( class_ == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get class loader */
+    jvmtiError error = this->_jvmti_env->GetClassLoader( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jobject*>( &class_loader ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
