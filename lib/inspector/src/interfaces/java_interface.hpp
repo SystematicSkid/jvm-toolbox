@@ -53,5 +53,12 @@ namespace inspector::interfaces
         virtual bool get_class_is_interface( void* class_, bool& is_interface ) = 0;
         virtual bool get_class_is_array( void* class_, bool& is_array ) = 0;
         virtual bool get_class_loader( void* class_, void*& class_loader ) = 0;
+
+        /* Field Methods */
+        virtual bool get_field_name( void* class_, void* field, std::string& name, std::string& signature, std::string& generic ) = 0;
+        virtual bool get_field_declaring_class( void* class_, void* field, void*& declaring_class ) = 0;
+        virtual bool get_field_modifiers( void* class_, void* field, std::int32_t& modifiers ) = 0;
+        virtual bool get_field_offset( void* class_, void* field, std::int64_t& offset ) = 0;
+        virtual bool get_field_is_synthetic( void* class_, void* field, bool& synthetic ) = 0;
     };
 }

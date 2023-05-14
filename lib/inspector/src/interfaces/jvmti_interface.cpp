@@ -879,3 +879,133 @@ bool inspector::interfaces::JvmtiInterface::get_class_loader( void* class_, void
     
     return true;
 }
+
+bool inspector::interfaces::JvmtiInterface::get_field_name( void* class_, void* field, std::string& name, std::string& signature, std::string& generic_ptr )
+{
+    /* Ensure field is valid */
+    if( field == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    char* name_ptr = nullptr;
+    char* signature_ptr = nullptr;
+    char* generic_ptr_ptr = nullptr;
+
+    /* Get field name */
+    jvmtiError error = this->_jvmti_env->GetFieldName( reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jfieldID>( field ),
+        &name_ptr,
+        &signature_ptr,
+        &generic_ptr_ptr 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+
+    /* Set our strings */
+    name = std::string( name_ptr );
+    signature = std::string( signature_ptr );
+    generic_ptr = std::string( generic_ptr_ptr );
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( name_ptr ) );
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( signature_ptr ) );
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( generic_ptr_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_field_modifiers( void* class_, void* field, std::int32_t& modifiers )
+{
+    /* Ensure field is valid */
+    if( field == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get field modifiers */
+    jvmtiError error = this->_jvmti_env->GetFieldModifiers( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jfieldID>( field ),
+        reinterpret_cast<jint*>( &modifiers ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_field_declaring_class( void* class_, void* field, void*& declaring_class )
+{
+    /* Ensure field is valid */
+    if( field == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get field declaring class */
+    jvmtiError error = this->_jvmti_env->GetFieldDeclaringClass( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jfieldID>( field ),
+        reinterpret_cast<jclass*>( &declaring_class ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_field_offset( void* class_, void* field, std::int64_t& offset )
+{
+    /* Ensure field is valid */
+    if( field == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get field offset */
+    offset = reinterpret_cast<std::int32_t>( field ) << 2;
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_field_is_synthetic( void* class_, void* field, bool& is_synthetic )
+{
+    /* Ensure field is valid */
+    if( field == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get field is synthetic */
+    jvmtiError error = this->_jvmti_env->IsFieldSynthetic( 
+        reinterpret_cast<jclass>( class_ ), 
+        reinterpret_cast<jfieldID>( field ),
+        reinterpret_cast<jboolean*>( &is_synthetic ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+    
+    return true;
+}

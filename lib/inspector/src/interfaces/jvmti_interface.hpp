@@ -64,5 +64,12 @@ namespace inspector::interfaces
         bool get_class_is_interface( void* class_, bool& is_interface ) override;
         bool get_class_is_array( void* class_, bool& is_array ) override;
         bool get_class_loader( void* class_, void*& class_loader ) override;
+
+        /* Field methods */
+        bool get_field_name( void* class_, void* field, std::string& name, std::string& signature, std::string& generic ) override;
+        bool get_field_declaring_class( void* class_, void* field, void*& declaring_class ) override;
+        bool get_field_modifiers( void* class_, void* field, std::int32_t& modifiers ) override;
+        bool get_field_offset( void* class_, void* field, std::int64_t& offset ) override;
+        bool get_field_is_synthetic( void* class_, void* field, bool& synthetic ) override;
     };
 }
