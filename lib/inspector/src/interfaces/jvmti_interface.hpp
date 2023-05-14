@@ -71,5 +71,20 @@ namespace inspector::interfaces
         bool get_field_modifiers( void* class_, void* field, std::int32_t& modifiers ) override;
         bool get_field_offset( void* class_, void* field, std::int64_t& offset ) override;
         bool get_field_is_synthetic( void* class_, void* field, bool& synthetic ) override;
+
+        /* Method methods */
+        bool get_method_name( void* method, std::string& name, std::string& signature, std::string& generic ) override;
+        bool get_method_declaring_class( void* method, void*& declaring_class ) override;
+        bool get_method_modifiers( void* method, std::int32_t& modifiers ) override;
+        bool get_max_locals( void* method, std::int32_t& max_locals ) override;
+        bool get_arguments_size( void* method, std::int32_t& arguments_size ) override;
+        bool get_line_number_table( void* method, std::vector<std::pair<std::int32_t, std::int32_t>>& line_number_table ) override;
+        bool get_method_location( void* method, std::int32_t& start, std::int32_t& end ) override;
+        bool get_local_variable_table( void* method, std::vector<void*>& local_variable_table ) override;
+        bool get_bytecodes( void* method, std::vector<std::uint8_t>& bytecodes ) override;
+        bool get_method_is_native( void* method, bool& is_native ) override;
+        bool get_method_is_synthetic( void* method, bool& is_synthetic ) override;
+        bool get_method_is_obsolete( void* method, bool& is_obsolete ) override;
+
     };
 }

@@ -28,7 +28,8 @@ inspector::interfaces::JvmtiInterface::~JvmtiInterface( )
 bool inspector::interfaces::JvmtiInterface::initialize( )
 {
     /* initialize all capabilities for jvmti */
-    jvmtiCapabilities capabilities = { 0 };
+    jvmtiCapabilities capabilities;
+    memset( &capabilities, 0, sizeof( jvmtiCapabilities ) );
     capabilities.can_tag_objects = 1;
     capabilities.can_generate_field_modification_events = 1;
     capabilities.can_generate_field_access_events = 1;
@@ -1005,6 +1006,353 @@ bool inspector::interfaces::JvmtiInterface::get_field_is_synthetic( void* class_
     {
         this->set_last_error( error );
         return false; 
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_name( void* method, std::string& name, std::string& signature, std::string& generic_ptr )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    char* name_ptr = nullptr;
+    char* signature_ptr = nullptr;
+    char* generic_ptr_ptr = nullptr;
+
+    /* Get method name */
+    jvmtiError error = this->_jvmti_env->GetMethodName( reinterpret_cast<jmethodID>( method ), 
+        &name_ptr,
+        &signature_ptr,
+        &generic_ptr_ptr 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+
+    /* Set our strings */
+    name = std::string( name_ptr );
+    signature = std::string( signature_ptr );
+    generic_ptr = std::string( generic_ptr_ptr );
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( name_ptr ) );
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( signature_ptr ) );
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( generic_ptr_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_modifiers( void* method, std::int32_t& modifiers )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get method modifiers */
+    jvmtiError error = this->_jvmti_env->GetMethodModifiers( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jint*>( &modifiers ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_declaring_class( void* method, void*& declaring_class )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get method declaring class */
+    jvmtiError error = this->_jvmti_env->GetMethodDeclaringClass( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jclass*>( &declaring_class ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_max_locals( void* method, std::int32_t& max_locals )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get max locals */
+    jvmtiError error = this->_jvmti_env->GetMaxLocals( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jint*>( &max_locals ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_arguments_size( void* method, std::int32_t& arguments_size )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get arguments size */
+    jvmtiError error = this->_jvmti_env->GetArgumentsSize( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jint*>( &arguments_size ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_line_number_table( void* method, std::vector<std::pair<std::int32_t, std::int32_t>>& line_number_table )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jint entry_count = 0;
+    jvmtiLineNumberEntry* entry_ptr = nullptr;
+
+    /* Get line number table */
+    jvmtiError error = this->_jvmti_env->GetLineNumberTable( 
+        reinterpret_cast<jmethodID>( method ),
+        &entry_count,
+        &entry_ptr
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    line_number_table.reserve( entry_count );
+    for( auto i = 0; i < entry_count; i++ )
+    {
+        line_number_table.emplace_back( std::make_pair( entry_ptr[i].start_location, entry_ptr[i].line_number ) );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( entry_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_location( void* method, std::int32_t& start_location, std::int32_t& end_location )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get method location */
+    jvmtiError error = this->_jvmti_env->GetMethodLocation( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jlocation*>( &start_location ),
+        reinterpret_cast<jlocation*>( &end_location )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_local_variable_table( void* method, std::vector<void*>& local_variable_table )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jint entry_count = 0;
+    jvmtiLocalVariableEntry* entry_ptr = nullptr;
+
+    /* Get local variable table */
+    jvmtiError error = this->_jvmti_env->GetLocalVariableTable( 
+        reinterpret_cast<jmethodID>( method ),
+        &entry_count,
+        &entry_ptr
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    local_variable_table.reserve( entry_count );
+    for( auto i = 0; i < entry_count; i++ )
+    {
+        /* TODO */
+        //local_variable_table.emplace_back( &entry_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( entry_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_bytecodes( void* method, std::vector<unsigned char>& bytecodes )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jint bytecode_count = 0;
+    unsigned char* bytecode_ptr = nullptr;
+
+    /* Get bytecodes */
+    jvmtiError error = this->_jvmti_env->GetBytecodes( 
+        reinterpret_cast<jmethodID>( method ),
+        &bytecode_count,
+        &bytecode_ptr
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    bytecodes.reserve( bytecode_count );
+    for( auto i = 0; i < bytecode_count; i++ )
+    {
+        bytecodes.emplace_back( bytecode_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( bytecode_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_is_native( void* method, bool& is_native )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get method is native */
+    jvmtiError error = this->_jvmti_env->IsMethodNative( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jboolean*>( &is_native )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_is_synthetic( void* method, bool& is_synthetic )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get method is synthetic */
+    jvmtiError error = this->_jvmti_env->IsMethodSynthetic( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jboolean*>( &is_synthetic )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+    
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_method_is_obsolete( void* method, bool& is_obsolete )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get method is obsolete */
+    jvmtiError error = this->_jvmti_env->IsMethodObsolete( 
+        reinterpret_cast<jmethodID>( method ),
+        reinterpret_cast<jboolean*>( &is_obsolete )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
     }
     
     return true;

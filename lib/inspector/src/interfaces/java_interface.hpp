@@ -60,5 +60,20 @@ namespace inspector::interfaces
         virtual bool get_field_modifiers( void* class_, void* field, std::int32_t& modifiers ) = 0;
         virtual bool get_field_offset( void* class_, void* field, std::int64_t& offset ) = 0;
         virtual bool get_field_is_synthetic( void* class_, void* field, bool& synthetic ) = 0;
+
+        /* Method methods (lul) */
+        virtual bool get_method_name( void* method, std::string& name, std::string& signature, std::string& generic ) = 0;
+        virtual bool get_method_declaring_class( void* method, void*& declaring_class ) = 0;
+        virtual bool get_method_modifiers( void* method, std::int32_t& modifiers ) = 0;
+        virtual bool get_max_locals( void* method, std::int32_t& max_locals ) = 0;
+        virtual bool get_arguments_size( void* method, std::int32_t& arguments_size ) = 0;
+        virtual bool get_line_number_table( void* method, std::vector<std::pair<std::int32_t, std::int32_t>>& line_number_table ) = 0;
+        virtual bool get_method_location( void* method, std::int32_t& start, std::int32_t& end ) = 0;
+        virtual bool get_local_variable_table( void* method, std::vector<void*>& local_variable_table ) = 0;
+        virtual bool get_bytecodes( void* method, std::vector<std::uint8_t>& bytecodes ) = 0;
+        virtual bool get_method_is_native( void* method, bool& is_native ) = 0;
+        virtual bool get_method_is_synthetic( void* method, bool& is_synthetic ) = 0;
+        virtual bool get_method_is_obsolete( void* method, bool& is_obsolete ) = 0;
+    
     };
 }
