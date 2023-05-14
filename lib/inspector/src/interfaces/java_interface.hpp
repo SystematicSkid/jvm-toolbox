@@ -17,6 +17,16 @@ namespace inspector::interfaces
         virtual std::string get_last_error_message( ) = 0;
         virtual void set_last_error( std::int32_t error ) = 0;
 
+        /* Thread methods */
+        virtual bool get_thread_state( void* thread, std::int32_t& state ) = 0;
+        virtual bool get_current_thread( void*& thread ) = 0;
+        virtual bool get_all_threads( std::vector<void*>& threads ) = 0;
+        virtual bool suspend_thread( void* thread ) = 0;
+        virtual bool resume_thread( void* thread ) = 0;
+        virtual bool stop_thread( void* thread, void* exception ) = 0;
+        virtual bool interrupt_thread( void* thread ) = 0;
+        virtual bool get_thread_info( void* thread, std::string& name, std::int32_t& priority, bool& daemon, void*& thread_group, void*& context_class_loader ) = 0;
+
         /* Class methods */
         virtual bool get_loaded_classes( std::vector<void*>& classes ) = 0;
         virtual bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) = 0;

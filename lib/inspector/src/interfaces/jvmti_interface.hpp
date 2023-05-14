@@ -27,6 +27,16 @@ namespace inspector::interfaces
         std::int32_t get_last_error( ) override;
         std::string get_last_error_message( ) override;
         void set_last_error( std::int32_t error ) override;
+        
+        /* Thread methods */
+        bool get_thread_state( void* thread, std::int32_t& state ) override;
+        bool get_current_thread( void*& thread ) override;
+        bool get_all_threads( std::vector<void*>& threads ) override;
+        bool suspend_thread( void* thread ) override;
+        bool resume_thread( void* thread ) override;
+        bool stop_thread( void* thread, void* exception ) override;
+        bool interrupt_thread( void* thread ) override;
+        bool get_thread_info( void* thread, std::string& name, std::int32_t& priority, bool& daemon, void*& thread_group, void*& context_class_loader ) override;
 
         /* Class methods */
         bool get_loaded_classes( std::vector<void*>& classes ) override;

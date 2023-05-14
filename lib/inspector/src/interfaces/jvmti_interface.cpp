@@ -56,6 +56,184 @@ void inspector::interfaces::JvmtiInterface::set_last_error( std::int32_t error )
     this->_last_error_message = inspector::utility::jvmti_error_codes[error];
 }
 
+bool inspector::interfaces::JvmtiInterface::get_thread_state( void* thread, std::int32_t& state )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Get thread state */
+    jvmtiError error = this->_jvmti_env->GetThreadState( reinterpret_cast<jthread>( thread ), 
+        reinterpret_cast<jint*>( &state ) 
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_current_thread( void*& thread )
+{
+    /* Get current thread */
+    jvmtiError error = this->_jvmti_env->GetCurrentThread( reinterpret_cast<jthread*>( &thread ) );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_all_threads( std::vector<void*>& threads )
+{
+    jint thread_count = 0;
+    jthread* thread_ptr = nullptr;
+
+    /* Get all threads via jvmti */
+    jvmtiError error = this->_jvmti_env->GetAllThreads( &thread_count, &thread_ptr );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    /* Reserve space on our vector */
+    threads.reserve( thread_count );
+    for( auto i = 0; i < thread_count; i++ )
+    {
+        threads.emplace_back( thread_ptr[i] );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( thread_ptr ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::suspend_thread( void* thread )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Suspend thread */
+    jvmtiError error = this->_jvmti_env->SuspendThread( reinterpret_cast<jthread>( thread ) );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::resume_thread( void* thread )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Resume thread */
+    jvmtiError error = this->_jvmti_env->ResumeThread( reinterpret_cast<jthread>( thread ) );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::stop_thread( void* thread, void* exception )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Stop thread */
+    jvmtiError error = this->_jvmti_env->StopThread( reinterpret_cast<jthread>( thread ), 
+        reinterpret_cast<jobject>( exception )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::interrupt_thread( void* thread )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Interrupt thread */
+    jvmtiError error = this->_jvmti_env->InterruptThread( reinterpret_cast<jthread>( thread ) );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_thread_info( void* thread, std::string& name, std::int32_t& priority, bool& daemon, void*& thread_group, void*& context_class_loader )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    jvmtiThreadInfo thread_info = { 0 };
+
+    /* Get thread info */
+    jvmtiError error = this->_jvmti_env->GetThreadInfo( reinterpret_cast<jthread>( thread ), 
+        &thread_info
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Set our strings */
+    name = std::string( thread_info.name );
+    priority = thread_info.priority;
+    daemon = thread_info.is_daemon;
+    thread_group = thread_info.thread_group;
+    context_class_loader = thread_info.context_class_loader;
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( thread_info.name ) );
+
+    return true;
+}
+
 bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<void*>& classes )
 {
     jint class_count = 0;
