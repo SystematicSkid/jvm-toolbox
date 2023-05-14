@@ -27,6 +27,62 @@ inspector::interfaces::JvmtiInterface::~JvmtiInterface( )
  
 bool inspector::interfaces::JvmtiInterface::initialize( )
 {
+    /* initialize all capabilities for jvmti */
+    jvmtiCapabilities capabilities = { 0 };
+    capabilities.can_tag_objects = 1;
+    capabilities.can_generate_field_modification_events = 1;
+    capabilities.can_generate_field_access_events = 1;
+    capabilities.can_get_bytecodes = 1;
+    capabilities.can_get_synthetic_attribute = 1;
+    capabilities.can_get_owned_monitor_info = 1;
+    capabilities.can_get_current_contended_monitor = 1;
+    capabilities.can_get_monitor_info = 1;
+    capabilities.can_pop_frame = 1;
+    capabilities.can_redefine_classes = 1;
+    capabilities.can_signal_thread = 1;
+    capabilities.can_get_source_file_name = 1;
+    capabilities.can_get_line_numbers = 1;
+    capabilities.can_get_source_debug_extension = 1;
+    capabilities.can_access_local_variables = 1;
+    capabilities.can_maintain_original_method_order = 1;
+    capabilities.can_generate_single_step_events = 1;
+    capabilities.can_generate_exception_events = 1;
+    capabilities.can_generate_frame_pop_events = 1;
+    capabilities.can_generate_breakpoint_events = 1;
+    capabilities.can_suspend = 1;
+    capabilities.can_redefine_any_class = 1;
+    capabilities.can_get_current_thread_cpu_time = 1;
+    capabilities.can_get_thread_cpu_time = 1;
+    capabilities.can_generate_method_entry_events = 1;
+    capabilities.can_generate_method_exit_events = 1;
+    capabilities.can_generate_all_class_hook_events = 1;
+    capabilities.can_generate_compiled_method_load_events = 1;
+    capabilities.can_generate_monitor_events = 1;
+    capabilities.can_generate_vm_object_alloc_events = 1;
+    capabilities.can_generate_native_method_bind_events = 1;
+    capabilities.can_generate_garbage_collection_events = 1;
+    capabilities.can_generate_object_free_events = 1;
+    capabilities.can_force_early_return = 1;
+    capabilities.can_get_owned_monitor_stack_depth_info = 1;
+    capabilities.can_get_constant_pool = 1;
+    capabilities.can_set_native_method_prefix = 1;
+    capabilities.can_retransform_classes = 1;
+    capabilities.can_retransform_any_class = 1;
+    capabilities.can_generate_resource_exhaustion_heap_events = 1;
+    capabilities.can_generate_resource_exhaustion_threads_events = 1;
+    capabilities.can_generate_early_vmstart = 1;
+    capabilities.can_generate_early_class_hook_events = 1;
+    capabilities.can_generate_sampled_object_alloc_events = 1;
+
+    /* Set our capabilities */
+    jvmtiError error = this->_jvmti_env->AddCapabilities( &capabilities );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
     return true;
 }
 
@@ -230,6 +286,127 @@ bool inspector::interfaces::JvmtiInterface::get_thread_info( void* thread, std::
 
     /* Deallocate memory */
     this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( thread_info.name ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_stack_trace( void* thread, std::int32_t start_depth, std::int32_t max_frame_count, std::vector<void*>& frames )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    jint frame_count = 0;
+    jvmtiFrameInfo* frame_ptr = new jvmtiFrameInfo[max_frame_count];
+
+    /* Get stack trace via jvmti */
+    jvmtiError error = this->_jvmti_env->GetStackTrace( reinterpret_cast<jthread>( thread ), 
+        start_depth,
+        max_frame_count,
+        frame_ptr,
+        &frame_count
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    frames.reserve( frame_count );
+    for( auto i = 0; i < frame_count; i++ )
+    {
+        frames.emplace_back( frame_ptr[i].method );
+    }
+
+    /* Deallocate memory */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( frame_ptr ) );
+    /* Free */
+    delete[] frame_ptr;
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_all_stack_traces( std::int32_t max_frame_count, std::vector<void*>& frames )
+{
+    jint thread_count = 0;
+    jvmtiStackInfo* stack_info = nullptr;
+
+    /* Get all threads via jvmti */
+    jvmtiError error = this->_jvmti_env->GetAllStackTraces( max_frame_count,
+        &stack_info,
+        &thread_count
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Reserve space on our vector */
+    frames.reserve( thread_count );
+    for( auto i = 0; i < thread_count; i++ )
+    {
+        frames.emplace_back( stack_info[i].frame_buffer );
+    }
+
+    /* Deallocate memory */
+    /* 
+        JVMTI: Note that this buffer is allocated to include the jvmtiFrameInfo buffers pointed
+        to by jvmtiStackInfo.frame_buffer. These buffers must not be separately deallocated.
+    */
+    this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( stack_info ) );
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_frame_count( void* thread, std::int32_t& count )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get frame count via jvmti */
+    jvmtiError error = this->_jvmti_env->GetFrameCount( reinterpret_cast<jthread>( thread ), 
+        reinterpret_cast<jint*>( &count )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_frame_location( void* thread, std::int32_t depth, void*& method, std::int32_t& location )
+{
+    /* Ensure thread is valid */
+    if( thread == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get frame location via jvmti */
+    jvmtiError error = this->_jvmti_env->GetFrameLocation( reinterpret_cast<jthread>( thread ), 
+        depth,
+        reinterpret_cast<jmethodID*>( &method ),
+        reinterpret_cast<jlocation*>( &location )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
 
     return true;
 }

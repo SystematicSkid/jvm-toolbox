@@ -38,6 +38,12 @@ namespace inspector::interfaces
         bool interrupt_thread( void* thread ) override;
         bool get_thread_info( void* thread, std::string& name, std::int32_t& priority, bool& daemon, void*& thread_group, void*& context_class_loader ) override;
 
+        /* Stack Frame methods */
+        bool get_stack_trace( void* thread, std::int32_t start_depth, std::int32_t max_frame_count, std::vector<void*>& frames ) override;
+        bool get_all_stack_traces( std::int32_t max_frame_count, std::vector<void*>& frames ) override;
+        bool get_frame_count( void* thread, std::int32_t& count ) override;
+        bool get_frame_location( void* thread, std::int32_t depth, void*& method, std::int32_t& location ) override;
+
         /* Class methods */
         bool get_loaded_classes( std::vector<void*>& classes ) override;
         bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) override;

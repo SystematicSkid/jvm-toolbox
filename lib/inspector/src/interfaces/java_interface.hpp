@@ -27,6 +27,12 @@ namespace inspector::interfaces
         virtual bool interrupt_thread( void* thread ) = 0;
         virtual bool get_thread_info( void* thread, std::string& name, std::int32_t& priority, bool& daemon, void*& thread_group, void*& context_class_loader ) = 0;
 
+        /* Stack Frame methods */
+        virtual bool get_stack_trace( void* thread, std::int32_t start_depth, std::int32_t max_frame_count, std::vector<void*>& frames ) = 0;
+        virtual bool get_all_stack_traces( std::int32_t max_frame_count, std::vector<void*>& frames ) = 0;
+        virtual bool get_frame_count( void* thread, std::int32_t& count ) = 0;
+        virtual bool get_frame_location( void* thread, std::int32_t depth, void*& method, std::int32_t& location ) = 0;
+
         /* Class methods */
         virtual bool get_loaded_classes( std::vector<void*>& classes ) = 0;
         virtual bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) = 0;
