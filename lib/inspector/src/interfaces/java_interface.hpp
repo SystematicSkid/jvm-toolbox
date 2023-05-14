@@ -33,6 +33,10 @@ namespace inspector::interfaces
         virtual bool get_frame_count( void* thread, std::int32_t& count ) = 0;
         virtual bool get_frame_location( void* thread, std::int32_t depth, void*& method, std::int32_t& location ) = 0;
 
+        /* Object methods */
+        virtual bool get_object_size( void* object, std::int32_t& size ) = 0;
+        virtual bool get_object_hash_code( void* object, std::int32_t& hash_code ) = 0;
+
         /* Class methods */
         virtual bool get_loaded_classes( std::vector<void*>& classes ) = 0;
         virtual bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) = 0;

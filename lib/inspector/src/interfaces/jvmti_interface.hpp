@@ -44,6 +44,10 @@ namespace inspector::interfaces
         bool get_frame_count( void* thread, std::int32_t& count ) override;
         bool get_frame_location( void* thread, std::int32_t depth, void*& method, std::int32_t& location ) override;
 
+        /* Object methods */
+        bool get_object_size( void* object, std::int32_t& size ) override;
+        bool get_object_hash_code( void* object, std::int32_t& hash_code ) override;
+
         /* Class methods */
         bool get_loaded_classes( std::vector<void*>& classes ) override;
         bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) override;

@@ -411,6 +411,50 @@ bool inspector::interfaces::JvmtiInterface::get_frame_location( void* thread, st
     return true;
 }
 
+bool inspector::interfaces::JvmtiInterface::get_object_size( void* object, std::int32_t& size )
+{
+    /* Ensure object is valid */
+    if( object == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get object size via jvmti */
+    jvmtiError error = this->_jvmti_env->GetObjectSize( reinterpret_cast<jobject>( object ), 
+        reinterpret_cast<jlong*>( &size )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::get_object_hash_code( void* object, std::int32_t& hash_code )
+{
+    /* Ensure object is valid */
+    if( object == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+    
+    /* Get object hash code via jvmti */
+    jvmtiError error = this->_jvmti_env->GetObjectHashCode( reinterpret_cast<jobject>( object ), 
+        reinterpret_cast<jint*>( &hash_code )
+    );
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+    }
+
+    return true;
+}
+
 bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<void*>& classes )
 {
     jint class_count = 0;
