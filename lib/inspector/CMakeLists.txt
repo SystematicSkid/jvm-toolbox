@@ -25,4 +25,4 @@ file(GLOB_RECURSE HPP_FILES src/*.hpp)
 file(GLOB_RECURSE CPP_FILES src/*.cpp)
 
 # specify that these files should be compiled to create an executable
-add_executable(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES})
+add_library(${PROJECT_NAME} SHARED ${CPP_FILES} ${HPP_FILES})
