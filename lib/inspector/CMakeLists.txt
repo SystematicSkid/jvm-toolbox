@@ -16,6 +16,9 @@ endif()
 include_directories(${JAVA_HOME}/include)
 include_directories(${JAVA_HOME}/include/win32)
 
+# Link the jni.lib and jvmti.lib files
+link_directories(${JAVA_HOME}/lib)
+
 
 # add the ./src directory
 include_directories(src)

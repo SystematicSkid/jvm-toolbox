@@ -2,21 +2,21 @@
 #include "utility/jni_errors.hpp"
 #include "jvmti_interface.hpp"
 
-inspector::interfaces::JvmtiInterface::JvmtiInterface( JavaVM* jvm )
+inspector::interfaces::JvmtiInterface::JvmtiInterface( )
 {
     /* Clear class variables */
     this->_jvmti_env = nullptr;
     this->_last_error = 0;
     this->_last_error_message = "";
 
-    /* Obtain our interface */
-    jint error = jvm->GetEnv( (void**)&this->_jvmti_env, JVMTI_VERSION );
-    if( error != JNI_OK )
+    if( !this->initialize( ) )
     {
-        this->_last_error = error;
-        this->_last_error_message = "Failed to obtain jvmti interface, please try a different interface.";
-        /* Append error code to end of error message */
-        this->_last_error_message += " Error code: " + inspector::utility::jvm_error_codes[error];
+        /* Error handling */
+        if( this->_last_error != JVMTI_ERROR_NONE )
+        {
+            /* Append error code to end of error message */
+            this->_last_error_message += " Error code: " + inspector::utility::jvmti_error_codes[this->_last_error];
+        }
     }
 }
 
@@ -27,6 +27,34 @@ inspector::interfaces::JvmtiInterface::~JvmtiInterface( )
  
 bool inspector::interfaces::JvmtiInterface::initialize( )
 {
+    /* Get all created Java VMS */
+    jint vm_count = 0;
+    JavaVM* jvm = nullptr;
+    jint error = JNI_GetCreatedJavaVMs( &jvm, 1, &vm_count );
+    /* Error handling */
+    if( error != JNI_OK )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Ensure we have at least one Java VM */
+    if( vm_count == 0 )
+    {
+        this->set_last_error( JVMTI_ERROR_INTERNAL );
+        return false;
+    }
+
+    /* Obtain our interface */
+    error = jvm->GetEnv( (void**)&this->_jvmti_env, JVMTI_VERSION );
+    if( error != JNI_OK )
+    {
+        this->_last_error = error;
+        this->_last_error_message = "Failed to obtain jvmti interface, please try a different interface.";
+        /* Append error code to end of error message */
+        this->_last_error_message += " Error code: " + inspector::utility::jvm_error_codes[error];
+    }
+
     /* initialize all capabilities for jvmti */
     jvmtiCapabilities capabilities;
     memset( &capabilities, 0, sizeof( jvmtiCapabilities ) );
@@ -76,7 +104,7 @@ bool inspector::interfaces::JvmtiInterface::initialize( )
     capabilities.can_generate_sampled_object_alloc_events = 1;
 
     /* Set our capabilities */
-    jvmtiError error = this->_jvmti_env->AddCapabilities( &capabilities );
+    error = this->_jvmti_env->AddCapabilities( &capabilities );
     /* Error handling */
     if( error != JVMTI_ERROR_NONE )
     {

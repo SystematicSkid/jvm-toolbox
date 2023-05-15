@@ -8,6 +8,10 @@
 #include <jni.h>
 #include <jvmti.h>
 
+/* Link jvm.lib */
+#pragma comment(lib, "jvm.lib")
+
+
 namespace inspector::interfaces
 {
     class JvmtiInterface : public JavaInterface
@@ -17,7 +21,7 @@ namespace inspector::interfaces
         std::int32_t _last_error;
         std::string _last_error_message;
     public:
-        JvmtiInterface( JavaVM* jvm );
+        JvmtiInterface( );
         ~JvmtiInterface( );
 
         /* Utility methods */
