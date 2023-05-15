@@ -14,3 +14,4 @@ include_directories(${JAVA_HOME}/include/win32)
 
 
 add_subdirectory(inspector)
+add_subdirectory(injector)
