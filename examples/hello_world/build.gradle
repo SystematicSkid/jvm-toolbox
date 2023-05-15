@@ -13,3 +13,14 @@ task run(type: JavaExec) {
     main = 'com.example.HelloWorld'
     classpath = sourceSets.main.runtimeClasspath
 }
+
+// Build a JAR file
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.example.HelloWorld'
+        )
+
+    }
+    
+}
