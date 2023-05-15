@@ -1,6 +1,9 @@
 #include "./jvmti_interface.hpp"
+#include "types/types.hpp"
 #include "utility/jni_errors.hpp"
 #include "jvmti_interface.hpp"
+
+#include <Windows.h>
 
 inspector::interfaces::JvmtiInterface::JvmtiInterface( )
 {
@@ -27,6 +30,7 @@ inspector::interfaces::JvmtiInterface::~JvmtiInterface( )
  
 bool inspector::interfaces::JvmtiInterface::initialize( )
 {
+    printf( "Initializing jvmti interface...\n" );
     /* Get all created Java VMS */
     jint vm_count = 0;
     JavaVM* jvm = nullptr;
@@ -45,6 +49,17 @@ bool inspector::interfaces::JvmtiInterface::initialize( )
         return false;
     }
 
+    jint result = jvm->GetEnv( reinterpret_cast<void**>(&env), JNI_VERSION_1_6 );
+	if ( result == JNI_EDETACHED )
+    {
+		result = jvm->AttachCurrentThread( reinterpret_cast<void**>( &env ), nullptr );
+    }
+    if ( result != JNI_OK )
+    {
+        this->set_last_error( result );
+        return false;
+    }
+
     /* Obtain our interface */
     error = jvm->GetEnv( (void**)&this->_jvmti_env, JVMTI_VERSION );
     if( error != JNI_OK )
@@ -58,50 +73,50 @@ bool inspector::interfaces::JvmtiInterface::initialize( )
     /* initialize all capabilities for jvmti */
     jvmtiCapabilities capabilities;
     memset( &capabilities, 0, sizeof( jvmtiCapabilities ) );
-    capabilities.can_tag_objects = 1;
-    capabilities.can_generate_field_modification_events = 1;
-    capabilities.can_generate_field_access_events = 1;
-    capabilities.can_get_bytecodes = 1;
-    capabilities.can_get_synthetic_attribute = 1;
-    capabilities.can_get_owned_monitor_info = 1;
-    capabilities.can_get_current_contended_monitor = 1;
-    capabilities.can_get_monitor_info = 1;
-    capabilities.can_pop_frame = 1;
-    capabilities.can_redefine_classes = 1;
-    capabilities.can_signal_thread = 1;
+    //capabilities.can_tag_objects = 1;
+    //capabilities.can_generate_field_modification_events = 1;
+    //capabilities.can_generate_field_access_events = 1;
+    //capabilities.can_get_bytecodes = 1;
+    //capabilities.can_get_synthetic_attribute = 1;
+    //capabilities.can_get_owned_monitor_info = 1;
+    //capabilities.can_get_current_contended_monitor = 1;
+    //capabilities.can_get_monitor_info = 1;
+    //capabilities.can_pop_frame = 1;
+    //capabilities.can_redefine_classes = 1;
+    //capabilities.can_signal_thread = 1;
     capabilities.can_get_source_file_name = 1;
-    capabilities.can_get_line_numbers = 1;
-    capabilities.can_get_source_debug_extension = 1;
-    capabilities.can_access_local_variables = 1;
-    capabilities.can_maintain_original_method_order = 1;
-    capabilities.can_generate_single_step_events = 1;
-    capabilities.can_generate_exception_events = 1;
-    capabilities.can_generate_frame_pop_events = 1;
-    capabilities.can_generate_breakpoint_events = 1;
-    capabilities.can_suspend = 1;
-    capabilities.can_redefine_any_class = 1;
-    capabilities.can_get_current_thread_cpu_time = 1;
-    capabilities.can_get_thread_cpu_time = 1;
-    capabilities.can_generate_method_entry_events = 1;
-    capabilities.can_generate_method_exit_events = 1;
-    capabilities.can_generate_all_class_hook_events = 1;
-    capabilities.can_generate_compiled_method_load_events = 1;
-    capabilities.can_generate_monitor_events = 1;
-    capabilities.can_generate_vm_object_alloc_events = 1;
-    capabilities.can_generate_native_method_bind_events = 1;
-    capabilities.can_generate_garbage_collection_events = 1;
-    capabilities.can_generate_object_free_events = 1;
-    capabilities.can_force_early_return = 1;
-    capabilities.can_get_owned_monitor_stack_depth_info = 1;
-    capabilities.can_get_constant_pool = 1;
-    capabilities.can_set_native_method_prefix = 1;
-    capabilities.can_retransform_classes = 1;
-    capabilities.can_retransform_any_class = 1;
-    capabilities.can_generate_resource_exhaustion_heap_events = 1;
-    capabilities.can_generate_resource_exhaustion_threads_events = 1;
-    capabilities.can_generate_early_vmstart = 1;
-    capabilities.can_generate_early_class_hook_events = 1;
-    capabilities.can_generate_sampled_object_alloc_events = 1;
+    //capabilities.can_get_line_numbers = 1;
+    //capabilities.can_get_source_debug_extension = 1;
+    //capabilities.can_access_local_variables = 1;
+    //capabilities.can_maintain_original_method_order = 1;
+    //capabilities.can_generate_single_step_events = 1;
+    //capabilities.can_generate_exception_events = 1;
+    //capabilities.can_generate_frame_pop_events = 1;
+    //capabilities.can_generate_breakpoint_events = 1;
+    //capabilities.can_suspend = 1;
+    //capabilities.can_redefine_any_class = 1;
+    //capabilities.can_get_current_thread_cpu_time = 1;
+    //capabilities.can_get_thread_cpu_time = 1;
+    //capabilities.can_generate_method_entry_events = 1;
+    //capabilities.can_generate_method_exit_events = 1;
+    //capabilities.can_generate_all_class_hook_events = 1;
+    //capabilities.can_generate_compiled_method_load_events = 1;
+    //capabilities.can_generate_monitor_events = 1;
+    //capabilities.can_generate_vm_object_alloc_events = 1;
+    //capabilities.can_generate_native_method_bind_events = 1;
+    //capabilities.can_generate_garbage_collection_events = 1;
+    //capabilities.can_generate_object_free_events = 1;
+    //capabilities.can_force_early_return = 1;
+    //capabilities.can_get_owned_monitor_stack_depth_info = 1;
+    //capabilities.can_get_constant_pool = 1;
+    //capabilities.can_set_native_method_prefix = 1;
+    //capabilities.can_retransform_classes = 1;
+    //capabilities.can_retransform_any_class = 1;
+    //capabilities.can_generate_resource_exhaustion_heap_events = 1;
+    //capabilities.can_generate_resource_exhaustion_threads_events = 1;
+    //capabilities.can_generate_early_vmstart = 1;
+    //capabilities.can_generate_early_class_hook_events = 1;
+    //capabilities.can_generate_sampled_object_alloc_events = 1;
 
     /* Set our capabilities */
     error = this->_jvmti_env->AddCapabilities( &capabilities );
@@ -484,7 +499,7 @@ bool inspector::interfaces::JvmtiInterface::get_object_hash_code( void* object, 
     return true;
 }
 
-bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<void*>& classes )
+bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<std::unique_ptr<inspector::types::JavaClass>>& classes )
 {
     jint class_count = 0;
     jclass* class_ptr = nullptr;
@@ -502,7 +517,7 @@ bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<void
     classes.reserve( class_count );
     for( auto i = 0; i < class_count; i++ )
     {
-        classes.emplace_back( class_ptr[i] );
+        classes.emplace_back( std::make_unique<inspector::types::JavaClass>( class_ptr[i] ) );
     }
     
     /* Deallocate memory */
@@ -573,8 +588,22 @@ bool inspector::interfaces::JvmtiInterface::get_class_signature( void* class_, s
     }
 
     /* Set our strings */
-    signature = std::string( signature_ptr );
-    generic_ptr = std::string( generic_ptr_ptr );
+    if( signature_ptr != nullptr )
+    {
+        signature = std::string( signature_ptr );
+    }
+    else
+    {
+        signature = "";
+    }
+    if( generic_ptr_ptr != nullptr )
+    {
+        generic_ptr = std::string( generic_ptr_ptr );
+    }
+    else
+    {
+        generic_ptr = "";
+    }
 
     /* Deallocate memory */
     this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( signature_ptr ) );
@@ -662,7 +691,7 @@ bool inspector::interfaces::JvmtiInterface::get_class_modifiers( void *class_, s
     return true;
 }
 
-bool inspector::interfaces::JvmtiInterface::get_class_methods( void* class_, std::vector<void*>& methods )
+bool inspector::interfaces::JvmtiInterface::get_class_methods( void* class_, std::vector<std::unique_ptr<inspector::types::JavaMethod>>& methods )
 {
     /* Ensure class is valid */
     if( class_ == nullptr )
@@ -690,7 +719,7 @@ bool inspector::interfaces::JvmtiInterface::get_class_methods( void* class_, std
     methods.reserve( method_count );
     for( auto i = 0; i < method_count; i++ )
     {
-        methods.emplace_back( method_ptr[i] );
+        methods.emplace_back( std::make_unique<inspector::types::JavaMethod>( method_ptr[i] ) );
     }
 
     /* Deallocate memory */
@@ -1066,9 +1095,30 @@ bool inspector::interfaces::JvmtiInterface::get_method_name( void* method, std::
     }
 
     /* Set our strings */
-    name = std::string( name_ptr );
-    signature = std::string( signature_ptr );
-    generic_ptr = std::string( generic_ptr_ptr );
+    if( name_ptr != nullptr )
+    {
+        name = std::string( name_ptr );
+    }
+    else
+    {
+        name = "";
+    }
+    if( signature_ptr != nullptr )
+    {
+        signature = std::string( signature_ptr );
+    }
+    else
+    {
+        signature = "";
+    }
+    if( generic_ptr_ptr != nullptr )
+    {
+        generic_ptr = std::string( generic_ptr_ptr );
+    }
+    else
+    {
+        generic_ptr = "";
+    }
 
     /* Deallocate memory */
     this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( name_ptr ) );
@@ -1383,5 +1433,55 @@ bool inspector::interfaces::JvmtiInterface::get_method_is_obsolete( void* method
         return false;
     }
     
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::set_method_breakpoint( void* method, std::int64_t location )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Set method breakpoint */
+    jvmtiError error = this->_jvmti_env->SetBreakpoint( 
+        reinterpret_cast<jmethodID>( method ),
+        static_cast<jlocation>( location )
+    );
+
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::clear_method_breakpoint( void* method, std::int64_t location )
+{
+    /* Ensure method is valid */
+    if( method == nullptr )
+    {
+        this->set_last_error( JVMTI_ERROR_NULL_POINTER );
+        return false;
+    }
+
+    /* Clear method breakpoint */
+    jvmtiError error = this->_jvmti_env->ClearBreakpoint( 
+        reinterpret_cast<jmethodID>( method ),
+        static_cast<jlocation>( location )
+    );
+
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+
     return true;
 }

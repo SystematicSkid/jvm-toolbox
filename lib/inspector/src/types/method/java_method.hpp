@@ -9,6 +9,8 @@ namespace inspector::types
     private:
         void* _method;
     public:
+        JavaMethod( void* method ) : _method( method ) { }
+
         bool get_method_name( std::string& name );
         bool get_method_signature( std::string& signature );
         bool get_method_generic_signature( std::string& generic_signature );
@@ -23,5 +25,8 @@ namespace inspector::types
         bool get_method_is_native( bool& is_native );
         bool get_method_is_synthetic( bool& is_synthetic );
         bool get_method_is_obsolete( bool& is_obsolete );
+
+        bool set_method_breakpoint( std::int64_t location );
+        bool clear_method_breakpoint( std::int64_t location );
     };
 }

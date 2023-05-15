@@ -38,14 +38,14 @@ namespace inspector::interfaces
         virtual bool get_object_hash_code( void* object, std::int32_t& hash_code ) = 0;
 
         /* Class methods */
-        virtual bool get_loaded_classes( std::vector<void*>& classes ) = 0;
+        virtual bool get_loaded_classes( std::vector<std::unique_ptr<inspector::types::JavaClass>>& classes ) = 0;
         virtual bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) = 0;
 
         virtual bool get_class_signature( void* class_, std::string& signature, std::string& generic_ptr ) = 0;
         virtual bool get_class_status( void* class_, std::int16_t& status ) = 0;
         virtual bool get_class_source_file_name( void* class_, std::string& source_file_name ) = 0;
         virtual bool get_class_modifiers( void* class_, std::int32_t& modifiers ) = 0;
-        virtual bool get_class_methods( void* class_, std::vector<void*>& methods ) = 0;
+        virtual bool get_class_methods( void* class_, std::vector<std::unique_ptr<inspector::types::JavaMethod>>& methods ) = 0;
         virtual bool get_class_fields( void* class_, std::vector<void*>& fields ) = 0;
         virtual bool get_class_interfaces( void* class_, std::vector<void*>& interfaces ) = 0;
         virtual bool get_class_version( void* class_, std::int32_t& minor, std::int32_t& major ) = 0;
@@ -74,6 +74,9 @@ namespace inspector::interfaces
         virtual bool get_method_is_native( void* method, bool& is_native ) = 0;
         virtual bool get_method_is_synthetic( void* method, bool& is_synthetic ) = 0;
         virtual bool get_method_is_obsolete( void* method, bool& is_obsolete ) = 0;
+
+        virtual bool set_method_breakpoint( void* method, std::int64_t location ) = 0;
+        virtual bool clear_method_breakpoint( void* method, std::int64_t location ) = 0;
     
     };
 }

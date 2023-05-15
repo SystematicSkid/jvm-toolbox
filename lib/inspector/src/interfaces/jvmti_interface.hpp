@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include "types/types.hpp"
 
 #include "java_interface.hpp"
 
@@ -18,6 +19,7 @@ namespace inspector::interfaces
     {
     private:
         jvmtiEnv* _jvmti_env;
+        JNIEnv* env;
         std::int32_t _last_error;
         std::string _last_error_message;
     public:
@@ -53,14 +55,14 @@ namespace inspector::interfaces
         bool get_object_hash_code( void* object, std::int32_t& hash_code ) override;
 
         /* Class methods */
-        bool get_loaded_classes( std::vector<void*>& classes ) override;
+        bool get_loaded_classes( std::vector<std::unique_ptr<inspector::types::JavaClass>>& classes ) override;
         bool get_classloader_classes( void* classloader, std::vector<void*>& classes ) override;
 
         bool get_class_signature( void* class_, std::string& signature, std::string& generic_ptr ) override;
         bool get_class_status( void* class_, std::int16_t& status ) override;
         bool get_class_source_file_name( void* class_, std::string& source_file_name ) override;
         bool get_class_modifiers( void* class_, std::int32_t& modifiers ) override;
-        bool get_class_methods( void* class_, std::vector<void*>& methods ) override;
+        bool get_class_methods( void* class_, std::vector<std::unique_ptr<inspector::types::JavaMethod>>& methods ) override;
         bool get_class_fields( void* class_, std::vector<void*>& fields ) override;
         bool get_class_interfaces( void* class_, std::vector<void*>& interfaces ) override;
         bool get_class_version( void* class_, std::int32_t& minor, std::int32_t& major ) override;
@@ -90,5 +92,8 @@ namespace inspector::interfaces
         bool get_method_is_synthetic( void* method, bool& is_synthetic ) override;
         bool get_method_is_obsolete( void* method, bool& is_obsolete ) override;
 
+        /* Method breakpoints */
+        bool set_method_breakpoint( void* method, std::int64_t location ) override;
+        bool clear_method_breakpoint( void* method, std::int64_t location ) override;
     };
 }

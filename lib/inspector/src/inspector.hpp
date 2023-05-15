@@ -12,6 +12,6 @@
 
 namespace inspector
 {
-    std::unique_ptr<interfaces::JavaInterface> java_interface;
-    HANDLE inspector_module;
+    extern std::unique_ptr<interfaces::JavaInterface> java_interface;
+    extern HANDLE inspector_module;
 }
