@@ -6,3 +6,5 @@ project(jvm-toolbox)
 
 add_subdirectory(lib)
 add_subdirectory(shared)
+
+add_custom_target(java-example-hello-world ALL COMMAND gradle -p examples/hello_world run)

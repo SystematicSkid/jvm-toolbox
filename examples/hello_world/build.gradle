@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task run(type: JavaExec) {
+    main = 'com.example.HelloWorld'
+    classpath = sourceSets.main.runtimeClasspath
+}

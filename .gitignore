@@ -36,3 +36,5 @@
 
 # vscode
 .vscode
+
+.gradle
