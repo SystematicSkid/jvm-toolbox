@@ -9,6 +9,8 @@ namespace inspector::types
     private:
         void* _class;
     public:
+        static bool get_loaded_classes( std::vector<JavaClass*>& classes );
+    public:
         bool get_class_signature( std::string& signature, std::string& generic_ptr );
         bool get_class_status( std::int16_t& status );
         bool get_class_source_file_name( std::string& source_file_name );
