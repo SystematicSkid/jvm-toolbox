@@ -33,6 +33,7 @@
 
 # Build files for cmake
 /[Bb]uild*/
+build
 
 # vscode
 .vscode
