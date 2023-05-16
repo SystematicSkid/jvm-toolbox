@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../include/producer.hpp"
 #include "../include/consumer.hpp"
-//#include "../test/flatbuffers/test_generated.h"
+#include "./flatbuffers/test_generated.h"
 #include <string>
 #include <thread>
 
@@ -67,5 +67,32 @@ TEST_F(IPCManagerTest, WriteAndReadLargeMessage)
                                 EXPECT_EQ(message, received);
                             });
 
+    producer.produce(message);
+}
+
+TEST_F(IPCManagerTest, WriteAndReadFlatbuffer)
+{
+    flatbuffers::FlatBufferBuilder builder;
+    jvm_toolbox::test::basic_tableBuilder basic_table_builder(builder);
+
+    basic_table_builder.add_a(1);
+    basic_table_builder.add_b(2);
+    basic_table_builder.add_c(3);
+
+    auto basic_table = basic_table_builder.Finish( );
+
+    builder.Finish(basic_table);
+
+    ipc::Producer producer(name, size);
+    ipc::Consumer consumer(name, size,
+                           [&](const std::vector<unsigned char> &message)
+                           {
+                               auto basic_table = flatbuffers::GetRoot<jvm_toolbox::test::basic_table>( message.data( ) );
+                               EXPECT_EQ(basic_table->a(), 1);
+                               EXPECT_EQ(basic_table->b(), 2);
+                               EXPECT_EQ(basic_table->c(), 3);
+                           });
+    
+    std::vector<unsigned char> message( builder.GetBufferPointer( ), builder.GetBufferPointer( ) + builder.GetSize( ) );
     producer.produce(message);
 }
