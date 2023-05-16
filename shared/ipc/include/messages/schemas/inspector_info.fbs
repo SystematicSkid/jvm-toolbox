@@ -1,0 +1,42 @@
+namespace jvm_toolbox_flatbuffers.inspector;
+
+/* STRUCTURES */
+table JavaMethod
+{
+    name:string;
+    signature:string;
+    address:long;
+}
+
+table JavaField
+{
+    name:string;
+    signature:string;
+    address:long;
+}
+
+table JavaClass
+{
+    signature:string;
+    address:long;
+    methods:[JavaMethod];
+    fields:[JavaField];
+}
+
+table JavaThread
+{
+    state:int32;
+    name:string;
+    priority:int32;
+    is_daemon:bool;
+}
+
+/* EVENTS */ 
+
+//
+// Sent when the inspector is ready to receive messages.
+//
+table OnInspectorLoaded
+{
+    inspector_interface:string;
+}

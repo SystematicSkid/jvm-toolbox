@@ -5,6 +5,23 @@
 /* Define extern symbols */
 std::unique_ptr<inspector::interfaces::JavaInterface> inspector::java_interface;
 HANDLE inspector::inspector_module;
+std::unique_ptr<ipc::Producer> inspector::producer;
+
+void setup_ipc( )
+{
+    /* Create producer with 1mb size */
+    inspector::producer = std::make_unique<ipc::Producer>( "inspector", 1024 * 1024 );
+
+    flatbuffers::FlatBufferBuilder builder;
+    jvm_toolbox_flatbuffers::inspector::OnInspectorLoadedBuilder packet( builder );
+
+    packet.add_inspector_interface( builder.CreateString( inspector::java_interface->get_name( ) ) );
+
+    builder.Finish( packet.Finish( ) );
+
+    std::vector<unsigned char> message( builder.GetBufferPointer( ), builder.GetBufferPointer( ) + builder.GetSize( ) );
+    inspector::producer->produce(message);
+}
 
 void initialize( )
 {
@@ -21,7 +38,11 @@ void initialize( )
     {
         printf( "Failed to initialize inspector: %s\n", inspector::java_interface->get_last_error_message( ).c_str( ) );
     }
+
     printf( "Inspector initialized\n" );
+    printf( "Initializing IPC...\n" );
+    setup_ipc( );
+
     std::vector<std::unique_ptr<inspector::types::JavaClass>> classes;
     inspector::java_interface->get_loaded_classes( classes );
 

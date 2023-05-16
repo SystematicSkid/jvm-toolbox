@@ -10,8 +10,14 @@
 /* Utility */
 #include "./utility/jni_errors.hpp"
 
+/* IPC */
+#include "ipc/include/ipc.hpp"
+#include "ipc/include/messages/inspector_info_generated.h"
+
 namespace inspector
 {
     extern std::unique_ptr<interfaces::JavaInterface> java_interface;
     extern HANDLE inspector_module;
+
+    extern std::unique_ptr<ipc::Producer> producer;
 }

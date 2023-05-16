@@ -29,3 +29,5 @@ file(GLOB_RECURSE CPP_FILES src/*.cpp)
 
 # specify that these files should be compiled to create an executable
 add_library(${PROJECT_NAME} SHARED ${CPP_FILES} ${HPP_FILES})
+
+target_link_libraries( jvm-toolbox-inspector PRIVATE jvm-toolbox-ipc-lib )

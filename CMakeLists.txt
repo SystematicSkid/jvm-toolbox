@@ -6,7 +6,7 @@ project(jvm-toolbox)
 add_definitions(-DNOMINMAX)
 
 # Include directories
-include_directories(includes)
+include_directories(includes shared/)
 
 add_subdirectory(lib)
 add_subdirectory(shared)
