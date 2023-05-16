@@ -33,23 +33,88 @@ public final class JavaMethod extends Table {
   public String signature() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer signatureAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
   public ByteBuffer signatureInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
-  public long address() { int o = __offset(8); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
+  public String genericSignature() { int o = __offset(8); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer genericSignatureAsByteBuffer() { return __vector_as_bytebuffer(8, 1); }
+  public ByteBuffer genericSignatureInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 1); }
+  public jvm_toolbox_flatbuffers.inspector.JavaClass declaringClass() { return declaringClass(new jvm_toolbox_flatbuffers.inspector.JavaClass()); }
+  public jvm_toolbox_flatbuffers.inspector.JavaClass declaringClass(jvm_toolbox_flatbuffers.inspector.JavaClass obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public int modifiers() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int maxLocals() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int argumentsSize() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public jvm_toolbox_flatbuffers.inspector.LineData lineNumberData(int j) { return lineNumberData(new jvm_toolbox_flatbuffers.inspector.LineData(), j); }
+  public jvm_toolbox_flatbuffers.inspector.LineData lineNumberData(jvm_toolbox_flatbuffers.inspector.LineData obj, int j) { int o = __offset(18); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int lineNumberDataLength() { int o = __offset(18); return o != 0 ? __vector_len(o) : 0; }
+  public jvm_toolbox_flatbuffers.inspector.LineData.Vector lineNumberDataVector() { return lineNumberDataVector(new jvm_toolbox_flatbuffers.inspector.LineData.Vector()); }
+  public jvm_toolbox_flatbuffers.inspector.LineData.Vector lineNumberDataVector(jvm_toolbox_flatbuffers.inspector.LineData.Vector obj) { int o = __offset(18); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public int methodStart() { int o = __offset(20); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int methodEnd() { int o = __offset(22); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public byte bytecodes(int j) { int o = __offset(24); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
+  public int bytecodesLength() { int o = __offset(24); return o != 0 ? __vector_len(o) : 0; }
+  public ByteVector bytecodesVector() { return bytecodesVector(new ByteVector()); }
+  public ByteVector bytecodesVector(ByteVector obj) { int o = __offset(24); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
+  public ByteBuffer bytecodesAsByteBuffer() { return __vector_as_bytebuffer(24, 1); }
+  public ByteBuffer bytecodesInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 24, 1); }
+  public boolean isNative() { int o = __offset(26); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public boolean isSynthetic() { int o = __offset(28); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public boolean isObsolete() { int o = __offset(30); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public long address() { int o = __offset(32); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
 
   public static int createJavaMethod(FlatBufferBuilder builder,
       int nameOffset,
       int signatureOffset,
+      int genericSignatureOffset,
+      int declaringClassOffset,
+      int modifiers,
+      int maxLocals,
+      int argumentsSize,
+      int lineNumberDataOffset,
+      int methodStart,
+      int methodEnd,
+      int bytecodesOffset,
+      boolean isNative,
+      boolean isSynthetic,
+      boolean isObsolete,
       long address) {
-    builder.startTable(3);
+    builder.startTable(15);
     JavaMethod.addAddress(builder, address);
+    JavaMethod.addBytecodes(builder, bytecodesOffset);
+    JavaMethod.addMethodEnd(builder, methodEnd);
+    JavaMethod.addMethodStart(builder, methodStart);
+    JavaMethod.addLineNumberData(builder, lineNumberDataOffset);
+    JavaMethod.addArgumentsSize(builder, argumentsSize);
+    JavaMethod.addMaxLocals(builder, maxLocals);
+    JavaMethod.addModifiers(builder, modifiers);
+    JavaMethod.addDeclaringClass(builder, declaringClassOffset);
+    JavaMethod.addGenericSignature(builder, genericSignatureOffset);
     JavaMethod.addSignature(builder, signatureOffset);
     JavaMethod.addName(builder, nameOffset);
+    JavaMethod.addIsObsolete(builder, isObsolete);
+    JavaMethod.addIsSynthetic(builder, isSynthetic);
+    JavaMethod.addIsNative(builder, isNative);
     return JavaMethod.endJavaMethod(builder);
   }
 
-  public static void startJavaMethod(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startJavaMethod(FlatBufferBuilder builder) { builder.startTable(15); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
   public static void addSignature(FlatBufferBuilder builder, int signatureOffset) { builder.addOffset(1, signatureOffset, 0); }
-  public static void addAddress(FlatBufferBuilder builder, long address) { builder.addLong(2, address, 0L); }
+  public static void addGenericSignature(FlatBufferBuilder builder, int genericSignatureOffset) { builder.addOffset(2, genericSignatureOffset, 0); }
+  public static void addDeclaringClass(FlatBufferBuilder builder, int declaringClassOffset) { builder.addOffset(3, declaringClassOffset, 0); }
+  public static void addModifiers(FlatBufferBuilder builder, int modifiers) { builder.addInt(4, modifiers, 0); }
+  public static void addMaxLocals(FlatBufferBuilder builder, int maxLocals) { builder.addInt(5, maxLocals, 0); }
+  public static void addArgumentsSize(FlatBufferBuilder builder, int argumentsSize) { builder.addInt(6, argumentsSize, 0); }
+  public static void addLineNumberData(FlatBufferBuilder builder, int lineNumberDataOffset) { builder.addOffset(7, lineNumberDataOffset, 0); }
+  public static int createLineNumberDataVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startLineNumberDataVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addMethodStart(FlatBufferBuilder builder, int methodStart) { builder.addInt(8, methodStart, 0); }
+  public static void addMethodEnd(FlatBufferBuilder builder, int methodEnd) { builder.addInt(9, methodEnd, 0); }
+  public static void addBytecodes(FlatBufferBuilder builder, int bytecodesOffset) { builder.addOffset(10, bytecodesOffset, 0); }
+  public static int createBytecodesVector(FlatBufferBuilder builder, byte[] data) { return builder.createByteVector(data); }
+  public static int createBytecodesVector(FlatBufferBuilder builder, ByteBuffer data) { return builder.createByteVector(data); }
+  public static void startBytecodesVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
+  public static void addIsNative(FlatBufferBuilder builder, boolean isNative) { builder.addBoolean(11, isNative, false); }
+  public static void addIsSynthetic(FlatBufferBuilder builder, boolean isSynthetic) { builder.addBoolean(12, isSynthetic, false); }
+  public static void addIsObsolete(FlatBufferBuilder builder, boolean isObsolete) { builder.addBoolean(13, isObsolete, false); }
+  public static void addAddress(FlatBufferBuilder builder, long address) { builder.addLong(14, address, 0L); }
   public static int endJavaMethod(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

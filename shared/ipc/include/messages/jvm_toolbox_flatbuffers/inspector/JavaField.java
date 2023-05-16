@@ -33,23 +33,46 @@ public final class JavaField extends Table {
   public String signature() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer signatureAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
   public ByteBuffer signatureInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
-  public long address() { int o = __offset(8); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
+  public String genericSignature() { int o = __offset(8); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer genericSignatureAsByteBuffer() { return __vector_as_bytebuffer(8, 1); }
+  public ByteBuffer genericSignatureInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 1); }
+  public jvm_toolbox_flatbuffers.inspector.JavaClass declaringClass() { return declaringClass(new jvm_toolbox_flatbuffers.inspector.JavaClass()); }
+  public jvm_toolbox_flatbuffers.inspector.JavaClass declaringClass(jvm_toolbox_flatbuffers.inspector.JavaClass obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public int modifiers() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public short offset() { int o = __offset(14); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public boolean isSynthetic() { int o = __offset(16); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public long fieldId() { int o = __offset(18); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
 
   public static int createJavaField(FlatBufferBuilder builder,
       int nameOffset,
       int signatureOffset,
-      long address) {
-    builder.startTable(3);
-    JavaField.addAddress(builder, address);
+      int genericSignatureOffset,
+      int declaringClassOffset,
+      int modifiers,
+      short offset,
+      boolean isSynthetic,
+      long fieldId) {
+    builder.startTable(8);
+    JavaField.addFieldId(builder, fieldId);
+    JavaField.addModifiers(builder, modifiers);
+    JavaField.addDeclaringClass(builder, declaringClassOffset);
+    JavaField.addGenericSignature(builder, genericSignatureOffset);
     JavaField.addSignature(builder, signatureOffset);
     JavaField.addName(builder, nameOffset);
+    JavaField.addOffset(builder, offset);
+    JavaField.addIsSynthetic(builder, isSynthetic);
     return JavaField.endJavaField(builder);
   }
 
-  public static void startJavaField(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startJavaField(FlatBufferBuilder builder) { builder.startTable(8); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
   public static void addSignature(FlatBufferBuilder builder, int signatureOffset) { builder.addOffset(1, signatureOffset, 0); }
-  public static void addAddress(FlatBufferBuilder builder, long address) { builder.addLong(2, address, 0L); }
+  public static void addGenericSignature(FlatBufferBuilder builder, int genericSignatureOffset) { builder.addOffset(2, genericSignatureOffset, 0); }
+  public static void addDeclaringClass(FlatBufferBuilder builder, int declaringClassOffset) { builder.addOffset(3, declaringClassOffset, 0); }
+  public static void addModifiers(FlatBufferBuilder builder, int modifiers) { builder.addInt(4, modifiers, 0); }
+  public static void addOffset(FlatBufferBuilder builder, short offset) { builder.addShort(5, offset, 0); }
+  public static void addIsSynthetic(FlatBufferBuilder builder, boolean isSynthetic) { builder.addBoolean(6, isSynthetic, false); }
+  public static void addFieldId(FlatBufferBuilder builder, long fieldId) { builder.addLong(7, fieldId, 0L); }
   public static int endJavaField(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

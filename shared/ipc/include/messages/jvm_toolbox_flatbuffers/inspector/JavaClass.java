@@ -30,38 +30,68 @@ public final class JavaClass extends Table {
   public String signature() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer signatureAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
   public ByteBuffer signatureInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
-  public long address() { int o = __offset(6); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
+  public String sourceFileNamne() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer sourceFileNamneAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public ByteBuffer sourceFileNamneInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
+  public short status() { int o = __offset(8); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public int modifiers() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int minorVersion() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int majorVersion() { int o = __offset(14); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public boolean isInterface() { int o = __offset(16); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public boolean isArray() { int o = __offset(18); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public long address() { int o = __offset(20); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
   public jvm_toolbox_flatbuffers.inspector.JavaMethod methods(int j) { return methods(new jvm_toolbox_flatbuffers.inspector.JavaMethod(), j); }
-  public jvm_toolbox_flatbuffers.inspector.JavaMethod methods(jvm_toolbox_flatbuffers.inspector.JavaMethod obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-  public int methodsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
+  public jvm_toolbox_flatbuffers.inspector.JavaMethod methods(jvm_toolbox_flatbuffers.inspector.JavaMethod obj, int j) { int o = __offset(22); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int methodsLength() { int o = __offset(22); return o != 0 ? __vector_len(o) : 0; }
   public jvm_toolbox_flatbuffers.inspector.JavaMethod.Vector methodsVector() { return methodsVector(new jvm_toolbox_flatbuffers.inspector.JavaMethod.Vector()); }
-  public jvm_toolbox_flatbuffers.inspector.JavaMethod.Vector methodsVector(jvm_toolbox_flatbuffers.inspector.JavaMethod.Vector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public jvm_toolbox_flatbuffers.inspector.JavaMethod.Vector methodsVector(jvm_toolbox_flatbuffers.inspector.JavaMethod.Vector obj) { int o = __offset(22); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
   public jvm_toolbox_flatbuffers.inspector.JavaField fields(int j) { return fields(new jvm_toolbox_flatbuffers.inspector.JavaField(), j); }
-  public jvm_toolbox_flatbuffers.inspector.JavaField fields(jvm_toolbox_flatbuffers.inspector.JavaField obj, int j) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-  public int fieldsLength() { int o = __offset(10); return o != 0 ? __vector_len(o) : 0; }
+  public jvm_toolbox_flatbuffers.inspector.JavaField fields(jvm_toolbox_flatbuffers.inspector.JavaField obj, int j) { int o = __offset(24); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int fieldsLength() { int o = __offset(24); return o != 0 ? __vector_len(o) : 0; }
   public jvm_toolbox_flatbuffers.inspector.JavaField.Vector fieldsVector() { return fieldsVector(new jvm_toolbox_flatbuffers.inspector.JavaField.Vector()); }
-  public jvm_toolbox_flatbuffers.inspector.JavaField.Vector fieldsVector(jvm_toolbox_flatbuffers.inspector.JavaField.Vector obj) { int o = __offset(10); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public jvm_toolbox_flatbuffers.inspector.JavaField.Vector fieldsVector(jvm_toolbox_flatbuffers.inspector.JavaField.Vector obj) { int o = __offset(24); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createJavaClass(FlatBufferBuilder builder,
       int signatureOffset,
+      int sourceFileNamneOffset,
+      short status,
+      int modifiers,
+      int minorVersion,
+      int majorVersion,
+      boolean isInterface,
+      boolean isArray,
       long address,
       int methodsOffset,
       int fieldsOffset) {
-    builder.startTable(4);
+    builder.startTable(11);
     JavaClass.addAddress(builder, address);
     JavaClass.addFields(builder, fieldsOffset);
     JavaClass.addMethods(builder, methodsOffset);
+    JavaClass.addMajorVersion(builder, majorVersion);
+    JavaClass.addMinorVersion(builder, minorVersion);
+    JavaClass.addModifiers(builder, modifiers);
+    JavaClass.addSourceFileNamne(builder, sourceFileNamneOffset);
     JavaClass.addSignature(builder, signatureOffset);
+    JavaClass.addStatus(builder, status);
+    JavaClass.addIsArray(builder, isArray);
+    JavaClass.addIsInterface(builder, isInterface);
     return JavaClass.endJavaClass(builder);
   }
 
-  public static void startJavaClass(FlatBufferBuilder builder) { builder.startTable(4); }
+  public static void startJavaClass(FlatBufferBuilder builder) { builder.startTable(11); }
   public static void addSignature(FlatBufferBuilder builder, int signatureOffset) { builder.addOffset(0, signatureOffset, 0); }
-  public static void addAddress(FlatBufferBuilder builder, long address) { builder.addLong(1, address, 0L); }
-  public static void addMethods(FlatBufferBuilder builder, int methodsOffset) { builder.addOffset(2, methodsOffset, 0); }
+  public static void addSourceFileNamne(FlatBufferBuilder builder, int sourceFileNamneOffset) { builder.addOffset(1, sourceFileNamneOffset, 0); }
+  public static void addStatus(FlatBufferBuilder builder, short status) { builder.addShort(2, status, 0); }
+  public static void addModifiers(FlatBufferBuilder builder, int modifiers) { builder.addInt(3, modifiers, 0); }
+  public static void addMinorVersion(FlatBufferBuilder builder, int minorVersion) { builder.addInt(4, minorVersion, 0); }
+  public static void addMajorVersion(FlatBufferBuilder builder, int majorVersion) { builder.addInt(5, majorVersion, 0); }
+  public static void addIsInterface(FlatBufferBuilder builder, boolean isInterface) { builder.addBoolean(6, isInterface, false); }
+  public static void addIsArray(FlatBufferBuilder builder, boolean isArray) { builder.addBoolean(7, isArray, false); }
+  public static void addAddress(FlatBufferBuilder builder, long address) { builder.addLong(8, address, 0L); }
+  public static void addMethods(FlatBufferBuilder builder, int methodsOffset) { builder.addOffset(9, methodsOffset, 0); }
   public static int createMethodsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startMethodsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
-  public static void addFields(FlatBufferBuilder builder, int fieldsOffset) { builder.addOffset(3, fieldsOffset, 0); }
+  public static void addFields(FlatBufferBuilder builder, int fieldsOffset) { builder.addOffset(10, fieldsOffset, 0); }
   public static int createFieldsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startFieldsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endJavaClass(FlatBufferBuilder builder) {

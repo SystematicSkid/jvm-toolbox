@@ -1,0 +1,74 @@
+namespace jvm_toolbox_flatbuffers.inspector;
+
+/* STRUCTURES */
+table LineData
+{
+    line_number:int32;
+    bytecode_index:int32;
+}
+
+table JavaObject
+{
+    address:long;
+    size:int32;
+    hash_code:int32;
+}
+
+table JavaMethod
+{
+    name:string;
+    signature:string;
+    generic_signature:string;
+    declaring_class:JavaClass;
+    modifiers:int32;
+    max_locals:int32;
+    arguments_size:int32;
+    line_number_data:[LineData];
+    method_start:int32;
+    method_end:int32;
+    bytecodes:[int8];
+    is_native:bool;
+    is_synthetic:bool;
+    is_obsolete:bool;
+    address:long;
+}
+
+table JavaField
+{
+    name:string;
+    signature:string;
+    generic_signature:string;
+    declaring_class:JavaClass;
+    modifiers:int32;
+    offset:int16;
+    is_synthetic:bool;
+    field_id:long;
+}
+
+table JavaClass
+{
+    signature:string;
+    source_file_namne:string;
+    status:int16;
+    modifiers:int32;
+    minor_version:int32;
+    major_version:int32;
+    is_interface:bool;
+    is_array:bool;
+    address:long;
+    methods:[JavaMethod];
+    fields:[JavaField];
+}
+
+table JavaStackFrame
+{
+    frame_count:int32;
+}
+
+table JavaThread
+{
+    state:int32;
+    name:string;
+    priority:int32;
+    is_daemon:bool;
+}
