@@ -1,0 +1,7 @@
+namespace jvm_toolbox.test;
+
+table basic_table {
+    a:short;
+    b:short;
+    c:short;
+}

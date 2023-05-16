@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <mutex>
 #include <Windows.h>
 #include "shared_memory_exception.hpp"
 
@@ -13,6 +14,8 @@ namespace ipc
 
         void write( const std::size_t offset, const void* data, const std::size_t size );
         void read( const std::size_t offset, void* data, const std::size_t size );
+        std::size_t size( ) const;
+        std::size_t get_message_size( );
         bool available( );
 
         template<typename T>
@@ -50,6 +53,7 @@ namespace ipc
         private:
             HANDLE _shared_memory_handle;
             HANDLE _mutex_handle;
+            std::mutex _mutex;
             void* _shared_memory;
 
             std::string _name;

@@ -80,7 +80,7 @@ namespace inspector::interfaces
 
         /* Method methods */
         bool get_method_name( void* method, std::string& name, std::string& signature, std::string& generic ) override;
-        bool get_method_declaring_class( void* method, void*& declaring_class ) override;
+        bool get_method_declaring_class( void* method, std::unique_ptr<inspector::types::JavaClass>& declaring_class ) override;
         bool get_method_modifiers( void* method, std::int32_t& modifiers ) override;
         bool get_max_locals( void* method, std::int32_t& max_locals ) override;
         bool get_arguments_size( void* method, std::int32_t& arguments_size ) override;

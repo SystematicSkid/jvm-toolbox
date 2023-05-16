@@ -1152,7 +1152,7 @@ bool inspector::interfaces::JvmtiInterface::get_method_modifiers( void* method, 
     return true;
 }
 
-bool inspector::interfaces::JvmtiInterface::get_method_declaring_class( void* method, void*& declaring_class )
+bool inspector::interfaces::JvmtiInterface::get_method_declaring_class( void* method, std::unique_ptr<inspector::types::JavaClass>& declaring_class )
 {
     /* Ensure method is valid */
     if( method == nullptr )
@@ -1160,12 +1160,17 @@ bool inspector::interfaces::JvmtiInterface::get_method_declaring_class( void* me
         this->set_last_error( JVMTI_ERROR_NULL_POINTER );
         return false;
     }
+
+    jclass declaring_class_ptr = nullptr;
     
     /* Get method declaring class */
     jvmtiError error = this->_jvmti_env->GetMethodDeclaringClass( 
         reinterpret_cast<jmethodID>( method ),
-        reinterpret_cast<jclass*>( &declaring_class ) 
+        reinterpret_cast<jclass*>( &declaring_class_ptr ) 
     );
+
+    declaring_class = std::make_unique<inspector::types::JavaClass>( declaring_class_ptr );
+
     /* Error handling */
     if( error != JVMTI_ERROR_NONE )
     {

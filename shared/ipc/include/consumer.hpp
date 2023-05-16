@@ -7,13 +7,14 @@
 #include <memory>
 #include <optional>
 #include <condition_variable>
+#include <iostream>
 
 namespace ipc
 {
     class Consumer
     {
     public:
-        using Callback = std::function<void(const std::string&)>;
+        using Callback = std::function<void(const std::vector<unsigned char>&)>;
 
         Consumer( const std::string& name, const std::size_t size, Callback callback )
             : _shared_memory_manager( std::make_shared<SharedMemoryManager>( name, size ) ), _callback( callback ),
@@ -28,33 +29,37 @@ namespace ipc
             this->_worker.join( );
         }
 
-        template <typename T>
-        std::optional<T> receive( )
+        
+        std::optional<std::vector<unsigned char>> receive( )
         {
             std::unique_lock<std::mutex> lock( _mutex );
-            std::chrono::milliseconds timeout( 100 );  
+             std::chrono::nanoseconds timeout( 1 );  
             if ( !_condition_variable.wait_for(lock, timeout, [this]() { return this->_shared_memory_manager->available( ); } ) ) {
                 // Handle timeout
                 return std::nullopt;
             }
 
-            if( this->_shared_memory_manager->available( ) )
-            {
-                T data;
-                this->_shared_memory_manager->read( 0, data );
-                return data;
-            }
-            else
-            {
-                return std::nullopt;
-            }
+            /* Read size */
+            auto size = this->_shared_memory_manager->get_message_size( );
+
+            std::vector<unsigned char> buffer( size + sizeof( size ) );
+            /* Read data */
+            this->_shared_memory_manager->read( 0, buffer.data( ), buffer.size( ) );
+            // Extract the size and the data from the buffer
+            //std::memcpy( &size, buffer.data( ), sizeof( size ) );
+            std::vector<unsigned char> data( buffer.begin( ) + sizeof( size ), buffer.end( ) );
+            // Consume the data by clearing the shared memory
+            std::fill( buffer.begin( ), buffer.end( ), 0 );
+            this->_shared_memory_manager->write( 0, buffer.data( ), buffer.size( ) );
+            return data;
+
         }
 
         void run( )
         {
             while ( !_stop )
             {
-                auto message = receive<std::string>( );
+                auto message = receive( );
                 if ( message.has_value( ) )
                 {
                     _callback( message.value( ) );

@@ -14,7 +14,7 @@ namespace inspector::types
         bool get_method_name( std::string& name );
         bool get_method_signature( std::string& signature );
         bool get_method_generic_signature( std::string& generic_signature );
-        bool get_method_declaring_class( void*& class_ );
+        bool get_method_declaring_class( std::unique_ptr<JavaClass>& class_ );
         bool get_method_modifiers( std::int32_t& modifiers );
         bool get_max_locals( std::int32_t& max_locals );
         bool get_arguments_size( std::int32_t& arguments_size );

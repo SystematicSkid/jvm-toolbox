@@ -1,4 +1,6 @@
 #include "../include/shared_memory_manager.hpp"
+#include <mutex>
+#include <iostream>
 
 ipc::SharedMemoryManager::SharedMemoryManager( const std::string& name, const std::size_t size )
     : _name( name ), _size( size ), _shared_memory_handle( nullptr ), _mutex_handle( nullptr ), _shared_memory( nullptr )
@@ -43,8 +45,6 @@ ipc::SharedMemoryManager::SharedMemoryManager( const std::string& name, const st
         CloseHandle( _shared_memory_handle );
         throw ipc::SharedMemoryException( "Failed to create mutex" );
     }
-
-    printf("Shared memory manager created\n");
 }
 
 ipc::SharedMemoryManager::~SharedMemoryManager( )
@@ -84,22 +84,39 @@ void ipc::SharedMemoryManager::unlock( )
 
 void ipc::SharedMemoryManager::write( const std::size_t offset, const void* data, const std::size_t size )
 {
-    lock( );
+    std::lock_guard<std::mutex> lock_( _mutex );
     std::memcpy( static_cast<char*>( _shared_memory ) + offset, data, size );
-    unlock( );
 }
 
 void ipc::SharedMemoryManager::read( const std::size_t offset, void* data, const std::size_t size )
 {
-    lock( );
+    std::lock_guard<std::mutex> lock_( _mutex );
     std::memcpy( data, static_cast<char*>( _shared_memory ) + offset, size );
-    unlock( );
+}
+
+std::size_t ipc::SharedMemoryManager::size( ) const
+{
+    return _size;
+}
+
+std::size_t ipc::SharedMemoryManager::get_message_size( )
+{
+    std::lock_guard<std::mutex> lock_( _mutex );
+    /* Read first 8 bytes */
+    std::size_t message_size = 0;
+    std::memcpy( &message_size, _shared_memory, sizeof( std::size_t ) );
+    return message_size;
 }
 
 bool ipc::SharedMemoryManager::available( )
 {
-    lock( );
-    bool result = std::memcmp( _shared_memory, "\0", 1 ) != 0;
-    unlock( );
-    return result;
+    std::lock_guard<std::mutex> lock_( _mutex );
+    for ( std::size_t i = 0; i < sizeof( std::size_t ); ++i )
+    {
+        if ( static_cast<char*>(_shared_memory)[i] != 0 )
+        {
+            return true;
+        }
+    }
+    return false;
 }

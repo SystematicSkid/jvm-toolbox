@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../include/producer.hpp"
 #include "../include/consumer.hpp"
+//#include "../test/flatbuffers/test_generated.h"
 #include <string>
 #include <thread>
 
@@ -19,14 +20,17 @@ protected:
 TEST_F(IPCManagerTest, WriteAndReadString)
 {
     ipc::Producer producer(name, size);
-    ipc::Consumer consumer(name, size, [](const std::string &message)
-                           { EXPECT_EQ(message, "Hello, IPC!"); });
+    ipc::Consumer consumer(name, size,
+                           [](const std::vector<unsigned char> &message)
+                           {
+                               /* Cast message to string */
+                               //std::string message_string(message.begin(), message.end());
+                               EXPECT_EQ((char*)message.data(), "A really super long string with many characters and many words lolololol!");
+                           });
 
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Give the consumer time to start up.
-
-    producer.produce<std::string>("Hello, IPC!");
-
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Give the consumer time to process the message.
+    std::string message = "A really super long string with many characters and many words lolololol!";
+    std::vector<unsigned char> message_vector(message.begin(), message.end());
+    producer.produce(message_vector);
 }
 
 TEST_F(IPCManagerTest, WriteAndReadMultipleStrings)
@@ -35,16 +39,33 @@ TEST_F(IPCManagerTest, WriteAndReadMultipleStrings)
     std::vector<std::string> received;
 
     ipc::Producer producer(name, size);
-    ipc::Consumer consumer(name, size, [&](const std::string &message)
-                           { received.push_back(message); });
-
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Give the consumer time to start up.
+    ipc::Consumer consumer(name, size, [&](const std::vector<unsigned char> &message)
+                           {
+                                /* Cast message to string */
+                                std::string message_string(message.begin(), message.end());
+                                received.push_back(message_string); });
 
     for (const auto &message : messages)
     {
-        producer.produce<std::string>(message);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Give the consumer time to process each message.
+        std::vector<unsigned char> message_vector(message.begin(), message.end());
+        producer.produce(message_vector);
+        std::this_thread::sleep_for(std::chrono::milliseconds(20)); // Give the consumer time to process the message.
     }
 
     EXPECT_EQ(messages, received);
+}
+
+TEST_F(IPCManagerTest, WriteAndReadLargeMessage)
+{
+    std::vector<unsigned char> message(4080, '1');
+    std::vector<unsigned char> received;
+
+    ipc::Producer producer(name, 4096);
+    ipc::Consumer consumer(name, 4096, [&](const std::vector<unsigned char> &message)
+                           {
+                                received = message;
+                                EXPECT_EQ(message, received);
+                            });
+
+    producer.produce(message);
 }

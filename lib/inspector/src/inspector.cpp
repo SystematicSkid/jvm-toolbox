@@ -38,7 +38,7 @@ void initialize( )
         class_->get_class_methods( methods );
 
         printf( "Class: %s\n", file_name.c_str( ) );
-        
+
         for( auto& method : methods )
         {
             std::string name;
@@ -49,6 +49,17 @@ void initialize( )
                 continue;
             }
             printf( "\tMethod: %s\n", name.c_str( ) );
+
+            std::string signature;
+            method->get_method_signature( signature );
+            if( inspector::java_interface->get_last_error( ) )
+            {
+                printf( "Failed to get method signature: %s\n", inspector::java_interface->get_last_error_message( ).c_str( ) );
+                continue;
+            }
+
+            printf( "\t\tSignature: %s\n", signature.c_str( ) );
+            
         }
     }
 

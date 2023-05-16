@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(jvm-toolbox)
 
-
+# Include directories
+include_directories(include)
 
 add_subdirectory(lib)
 add_subdirectory(shared)
