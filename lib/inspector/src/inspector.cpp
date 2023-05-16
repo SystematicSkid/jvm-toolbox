@@ -11,7 +11,6 @@ void setup_ipc( )
 {
     /* Create producer with 1mb size */
     inspector::producer = std::make_unique<ipc::Producer>( "inspector", 1024 * 1024 );
-
     flatbuffers::FlatBufferBuilder builder;
     jvm_toolbox_flatbuffers::inspector::OnInspectorLoadedBuilder packet( builder );
 
