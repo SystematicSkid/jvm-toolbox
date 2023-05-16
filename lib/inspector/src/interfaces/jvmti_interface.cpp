@@ -99,7 +99,7 @@ bool inspector::interfaces::JvmtiInterface::initialize( )
     //capabilities.can_get_thread_cpu_time = 1;
     //capabilities.can_generate_method_entry_events = 1;
     //capabilities.can_generate_method_exit_events = 1;
-    //capabilities.can_generate_all_class_hook_events = 1;
+    capabilities.can_generate_all_class_hook_events = 1;
     //capabilities.can_generate_compiled_method_load_events = 1;
     //capabilities.can_generate_monitor_events = 1;
     //capabilities.can_generate_vm_object_alloc_events = 1;
