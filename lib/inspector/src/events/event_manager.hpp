@@ -4,6 +4,7 @@
 
 #include "base_event.hpp"
 #include "class_file_load_event.hpp"
+#include "vm_death_event.hpp"
 
 namespace inspector::events
 {
@@ -22,7 +23,8 @@ namespace inspector::events
         EventManager( );
 
         bool add_event( std::unique_ptr<BaseEvent> event );
-
+        
+        bool setup_events( inspector::interfaces::JavaInterface* java_interface );
         bool enable_all_events( );
         bool disable_all_events( );
 

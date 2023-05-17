@@ -9,7 +9,7 @@ ipc::Consumer* inspector::headless::consumer = nullptr;
 
 void inspector::headless::on_message( const std::vector<std::uint8_t>& message )
 {
-    if(flatbuffers::BufferHasIdentifier( message.data( ), "ClassFileLoadEvent" ))
+    if( flatbuffers::BufferHasIdentifier( message.data( ), "ClassFileLoadEvent" ) )
     {
         auto event = flatbuffers::GetRoot<jvm_toolbox_flatbuffers::inspector::OnClassFileLoad>( message.data( ) );
         std::cout << "ClassFileLoadEvent: " << event->name()->c_str() << std::endl;
@@ -20,6 +20,10 @@ void inspector::headless::on_message( const std::vector<std::uint8_t>& message )
             std::cout << std::hex << (int)byte << " ";
         }
         std::cout << std::endl;
+    }
+    else if( flatbuffers::BufferHasIdentifier( message.data( ), "VMDeathEvent" ) )
+    {
+        std::cout << "VMDeathEvent" << std::endl;
     }
     else
     {

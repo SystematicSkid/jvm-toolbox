@@ -99,5 +99,6 @@ namespace inspector::interfaces
 
         /* Event callbacks */
         bool set_class_file_load_event( void* callback ) override;
+        bool set_vm_death_event( void* callback ) override;
     };
 }

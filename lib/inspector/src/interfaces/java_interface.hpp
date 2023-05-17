@@ -81,6 +81,7 @@ namespace inspector::interfaces
 
         /* Event methods */
         virtual bool set_class_file_load_event( void* callback ) = 0;
+        virtual bool set_vm_death_event( void* callback ) = 0;
 
     };
 }

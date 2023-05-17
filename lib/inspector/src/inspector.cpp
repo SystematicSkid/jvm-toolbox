@@ -49,22 +49,17 @@ void initialize( )
     inspector::headless::setup_consumer( );
     #endif
 
-    auto class_file_load_event = std::make_unique<inspector::events::ClassFileLoadEvent>( );
-
-    if( !class_file_load_event )
+    inspector::events::EventManager* event_manager = inspector::events::EventManager::get( );
+    if(!event_manager->setup_events( inspector::java_interface.get( ) ))
     {
-        printf( "Failed to get class file load event.\n" );
+        printf( "Failed to setup events.\n" );
         return;
     }
-    class_file_load_event->setup( inspector::java_interface.get( ) );
-
-    if( !class_file_load_event->enable( ) )
+    if(!event_manager->enable_all_events( ))
     {
-        printf( "Failed to enable class file load event.\n" );
+        printf( "Failed to enable events.\n" );
         return;
     }
-
-    printf( "Class file load event enabled.\n" );
 
     std::vector<std::unique_ptr<inspector::types::JavaClass>> classes;
     inspector::java_interface->get_loaded_classes( classes );

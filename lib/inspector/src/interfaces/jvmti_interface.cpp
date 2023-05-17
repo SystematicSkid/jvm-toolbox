@@ -503,7 +503,7 @@ bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<std:
 {
     jint class_count = 0;
     jclass* class_ptr = nullptr;
-    
+
     /* Get all loaded classes via jvmti */
     jvmtiError error = this->_jvmti_env->GetLoadedClasses( &class_count, &class_ptr );
     /* Error handling */
@@ -1528,6 +1528,40 @@ bool inspector::interfaces::JvmtiInterface::set_class_file_load_event( void* cal
 
     /* Set class file load event callback */
     this->_event_callbacks.ClassFileLoadHook = reinterpret_cast<jvmtiEventClassFileLoadHook>( callback );
+    error = this->_jvmti_env->SetEventCallbacks( &this->_event_callbacks, sizeof( this->_event_callbacks ) );
+
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::set_vm_death_event( void* callback )
+{
+    /* Ensure callback is valid */
+    if( callback == nullptr )
+    {
+        jvmtiError error = this->_jvmti_env->SetEventNotificationMode( JVMTI_DISABLE, JVMTI_EVENT_VM_DEATH, nullptr );
+        this->set_last_error( error );
+        return false;
+    }
+    
+    /* No capabilities needed for this event */
+
+    /* Set class file load event */
+    jvmtiError error = this->_jvmti_env->SetEventNotificationMode( JVMTI_ENABLE, JVMTI_EVENT_VM_DEATH, nullptr );
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Set class file load event callback */
+    this->_event_callbacks.VMDeath = reinterpret_cast<jvmtiEventVMDeath>( callback );
     error = this->_jvmti_env->SetEventCallbacks( &this->_event_callbacks, sizeof( this->_event_callbacks ) );
 
     /* Error handling */

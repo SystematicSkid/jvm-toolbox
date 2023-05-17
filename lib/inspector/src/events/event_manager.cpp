@@ -4,6 +4,7 @@ inspector::events::EventManager::EventManager()
 {
     /* Add events */
     this->add_event( std::make_unique<inspector::events::ClassFileLoadEvent>( ) );
+    this->add_event( std::make_unique<inspector::events::VMDeathEvent>( ) );
 }
 
 bool inspector::events::EventManager::add_event(std::unique_ptr<inspector::events::BaseEvent> event)
@@ -14,7 +15,17 @@ bool inspector::events::EventManager::add_event(std::unique_ptr<inspector::event
     return true;
 }
 
-bool inspector::events::EventManager::enable_all_events( )
+bool inspector::events::EventManager::setup_events(inspector::interfaces::JavaInterface *java_interface)
+{
+    for ( auto& event : _events )
+    {
+        if ( !event.second->setup( java_interface ) )
+            return false;
+    }
+    return true;
+}
+
+bool inspector::events::EventManager::enable_all_events()
 {
     for( auto& event : _events )
         event.second->enable( );
