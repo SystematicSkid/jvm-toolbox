@@ -9,11 +9,21 @@ ipc::Consumer* inspector::headless::consumer = nullptr;
 
 void inspector::headless::on_message( const std::vector<std::uint8_t>& message )
 {
-    printf( "Message received.\n" );
     if(flatbuffers::BufferHasIdentifier( message.data( ), "ClassFileLoadEvent" ))
     {
         auto event = flatbuffers::GetRoot<jvm_toolbox_flatbuffers::inspector::OnClassFileLoad>( message.data( ) );
         std::cout << "ClassFileLoadEvent: " << event->name()->c_str() << std::endl;
+        std::vector<std::uint8_t> bytecode = { event->bytecode()->begin(), event->bytecode()->end() };
+        std::cout << "Bytecode: ";
+        for( auto& byte : bytecode )
+        {
+            std::cout << std::hex << (int)byte << " ";
+        }
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << "Unknown event received." << std::endl;
     }
 }
 

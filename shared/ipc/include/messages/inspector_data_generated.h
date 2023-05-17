@@ -1647,8 +1647,8 @@ struct OnClassFileLoad FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   const jvm_toolbox_flatbuffers::inspector::JavaObject *loader() const {
     return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_LOADER);
   }
-  const ::flatbuffers::Vector<int8_t> *bytecode() const {
-    return GetPointer<const ::flatbuffers::Vector<int8_t> *>(VT_BYTECODE);
+  const ::flatbuffers::Vector<uint8_t> *bytecode() const {
+    return GetPointer<const ::flatbuffers::Vector<uint8_t> *>(VT_BYTECODE);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
@@ -1677,7 +1677,7 @@ struct OnClassFileLoadBuilder {
   void add_loader(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> loader) {
     fbb_.AddOffset(OnClassFileLoad::VT_LOADER, loader);
   }
-  void add_bytecode(::flatbuffers::Offset<::flatbuffers::Vector<int8_t>> bytecode) {
+  void add_bytecode(::flatbuffers::Offset<::flatbuffers::Vector<uint8_t>> bytecode) {
     fbb_.AddOffset(OnClassFileLoad::VT_BYTECODE, bytecode);
   }
   explicit OnClassFileLoadBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
@@ -1696,7 +1696,7 @@ inline ::flatbuffers::Offset<OnClassFileLoad> CreateOnClassFileLoad(
     ::flatbuffers::Offset<::flatbuffers::String> name = 0,
     ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0,
     ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> loader = 0,
-    ::flatbuffers::Offset<::flatbuffers::Vector<int8_t>> bytecode = 0) {
+    ::flatbuffers::Offset<::flatbuffers::Vector<uint8_t>> bytecode = 0) {
   OnClassFileLoadBuilder builder_(_fbb);
   builder_.add_bytecode(bytecode);
   builder_.add_loader(loader);
@@ -1710,9 +1710,9 @@ inline ::flatbuffers::Offset<OnClassFileLoad> CreateOnClassFileLoadDirect(
     const char *name = nullptr,
     ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0,
     ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> loader = 0,
-    const std::vector<int8_t> *bytecode = nullptr) {
+    const std::vector<uint8_t> *bytecode = nullptr) {
   auto name__ = name ? _fbb.CreateString(name) : 0;
-  auto bytecode__ = bytecode ? _fbb.CreateVector<int8_t>(*bytecode) : 0;
+  auto bytecode__ = bytecode ? _fbb.CreateVector<uint8_t>(*bytecode) : 0;
   return jvm_toolbox_flatbuffers::inspector::CreateOnClassFileLoad(
       _fbb,
       name__,

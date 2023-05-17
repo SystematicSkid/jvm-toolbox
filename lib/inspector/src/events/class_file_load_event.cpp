@@ -64,20 +64,19 @@ void inspector::events::ClassFileLoadEvent::class_file_load_hook(
     std::int32_t *new_class_data_len, 
     std::uint8_t **new_class_data)
 {
-    printf( "Class file load event.\n" );
-    printf( "\tName: %s\n", name );
     /* Create our flatbuffer object */
     flatbuffers::FlatBufferBuilder builder;
     jvm_toolbox_flatbuffers::inspector::OnClassFileLoadBuilder packet( builder );
 
     packet.add_name( builder.CreateString( name ) );
+    std::vector<std::uint8_t> bytecode( class_data, class_data + class_data_len );
+    packet.add_bytecode( builder.CreateVector( bytecode ) );
 
     /* Finish our packet */
     builder.Finish( packet.Finish( ), "ClassFileLoadEvent" );
 
     /* Create our message */
     std::vector<unsigned char> message( builder.GetBufferPointer( ), builder.GetBufferPointer( ) + builder.GetSize( ) );
-    printf("Builder size: %d\n", builder.GetSize());
     /* Produce our message */
     inspector::producer->produce( message );
 }

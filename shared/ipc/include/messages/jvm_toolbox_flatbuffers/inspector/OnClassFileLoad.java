@@ -34,7 +34,7 @@ public final class OnClassFileLoad extends Table {
   public jvm_toolbox_flatbuffers.inspector.JavaClass class_(jvm_toolbox_flatbuffers.inspector.JavaClass obj) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   public jvm_toolbox_flatbuffers.inspector.JavaObject loader() { return loader(new jvm_toolbox_flatbuffers.inspector.JavaObject()); }
   public jvm_toolbox_flatbuffers.inspector.JavaObject loader(jvm_toolbox_flatbuffers.inspector.JavaObject obj) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
-  public byte bytecode(int j) { int o = __offset(10); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
+  public int bytecode(int j) { int o = __offset(10); return o != 0 ? bb.get(__vector(o) + j * 1) & 0xFF : 0; }
   public int bytecodeLength() { int o = __offset(10); return o != 0 ? __vector_len(o) : 0; }
   public ByteVector bytecodeVector() { return bytecodeVector(new ByteVector()); }
   public ByteVector bytecodeVector(ByteVector obj) { int o = __offset(10); return o != 0 ? obj.__assign(__vector(o), bb) : null; }

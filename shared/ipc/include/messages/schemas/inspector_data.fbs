@@ -162,7 +162,7 @@ table OnClassFileLoad
     name:string;
     class:JavaClass;
     loader:JavaObject;
-    bytecode:[int8];
+    bytecode:[uint8];
 }
 
 table OnVMDeath
