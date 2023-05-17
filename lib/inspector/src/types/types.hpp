@@ -1,6 +1,8 @@
 #pragma once
 
 /* Types */
+#include "./object/java_object.hpp"
+
 #include "./class/java_class.hpp"
 #include "./class/java_field.hpp"
 

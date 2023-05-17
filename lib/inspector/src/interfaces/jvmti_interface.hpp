@@ -22,6 +22,7 @@ namespace inspector::interfaces
         JNIEnv* env;
         std::int32_t _last_error;
         std::string _last_error_message;
+        jvmtiEventCallbacks _event_callbacks;
     public:
         JvmtiInterface( );
         ~JvmtiInterface( );
@@ -95,5 +96,8 @@ namespace inspector::interfaces
         /* Method breakpoints */
         bool set_method_breakpoint( void* method, std::int64_t location ) override;
         bool clear_method_breakpoint( void* method, std::int64_t location ) override;
+
+        /* Event callbacks */
+        bool set_class_file_load_event( void* callback ) override;
     };
 }

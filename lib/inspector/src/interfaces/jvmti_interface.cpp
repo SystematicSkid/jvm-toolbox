@@ -1038,7 +1038,7 @@ bool inspector::interfaces::JvmtiInterface::get_field_offset( void* class_, void
     }
     
     /* Get field offset */
-    offset = reinterpret_cast<std::int32_t>( field ) << 2;
+    offset = reinterpret_cast<std::int64_t>( field ) << 2;
     
     return true;
 }
@@ -1258,7 +1258,7 @@ bool inspector::interfaces::JvmtiInterface::get_line_number_table( void* method,
     line_number_table.reserve( entry_count );
     for( auto i = 0; i < entry_count; i++ )
     {
-        line_number_table.emplace_back( std::make_pair( entry_ptr[i].start_location, entry_ptr[i].line_number ) );
+        line_number_table.emplace_back( std::make_pair( (std::int32_t)entry_ptr[i].start_location, (std::int32_t)entry_ptr[i].line_number ) );
     }
 
     /* Deallocate memory */
@@ -1480,6 +1480,56 @@ bool inspector::interfaces::JvmtiInterface::clear_method_breakpoint( void* metho
         reinterpret_cast<jmethodID>( method ),
         static_cast<jlocation>( location )
     );
+
+    /* Error handling */
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false; 
+    }
+
+    return true;
+}
+
+bool inspector::interfaces::JvmtiInterface::set_class_file_load_event( void* callback )
+{
+    /* Ensure callback is valid */
+    if( callback == nullptr )
+    {
+        jvmtiError error = this->_jvmti_env->SetEventNotificationMode( JVMTI_DISABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, nullptr );
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Get current capabilities */
+    jvmtiCapabilities capabilities;
+    jvmtiError error = this->_jvmti_env->GetCapabilities( &capabilities );
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Set class file load event capability */
+    capabilities.can_generate_all_class_hook_events = 1;
+    error = this->_jvmti_env->AddCapabilities( &capabilities );
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Set class file load event */
+    error = this->_jvmti_env->SetEventNotificationMode( JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, nullptr );
+    if( error != JVMTI_ERROR_NONE )
+    {
+        this->set_last_error( error );
+        return false;
+    }
+
+    /* Set class file load event callback */
+    this->_event_callbacks.ClassFileLoadHook = reinterpret_cast<jvmtiEventClassFileLoadHook>( callback );
+    error = this->_jvmti_env->SetEventCallbacks( &this->_event_callbacks, sizeof( this->_event_callbacks ) );
 
     /* Error handling */
     if( error != JVMTI_ERROR_NONE )

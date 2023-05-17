@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "../types/types.hpp"
 
 namespace inspector::interfaces
 {
@@ -77,6 +78,9 @@ namespace inspector::interfaces
 
         virtual bool set_method_breakpoint( void* method, std::int64_t location ) = 0;
         virtual bool clear_method_breakpoint( void* method, std::int64_t location ) = 0;
-    
+
+        /* Event methods */
+        virtual bool set_class_file_load_event( void* callback ) = 0;
+
     };
 }

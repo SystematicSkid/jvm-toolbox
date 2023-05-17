@@ -10,6 +10,9 @@
 /* Utility */
 #include "./utility/jni_errors.hpp"
 
+/* Events */
+#include "./events/event_manager.hpp"
+
 /* IPC */
 #include "ipc/include/ipc.hpp"
 #include "ipc/include/messages/inspector_info_generated.h"
