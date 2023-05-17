@@ -19,6 +19,15 @@ include_directories(${JAVA_HOME}/include/win32)
 # Link the jni.lib and jvmti.lib files
 link_directories(${JAVA_HOME}/lib)
 
+# Define the HEADLESS_MODE variable
+option(HEADLESS_MODE "Build the headless version of the inspector" TRUE)
+# Check if HEADLESS_MODE is set, if it is: add_compile_definitions
+if(HEADLESS_MODE)
+    message(STATUS "Building the headless version of the inspector")
+    add_compile_definitions(-DHEADLESS_MODE)
+else()
+    message(STATUS "Building the GUI version of the inspector")
+endif()
 
 # add the ./src directory
 include_directories(src)
@@ -26,6 +35,10 @@ include_directories(src)
 # gather all .hpp and .cpp files into variables
 file(GLOB_RECURSE HPP_FILES src/*.hpp)
 file(GLOB_RECURSE CPP_FILES src/*.cpp)
+
+if(NOT HEADLESS_MODE)
+    list(REMOVE_ITEM CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/headless.cpp")
+endif()
 
 # specify that these files should be compiled to create an executable
 add_library(${PROJECT_NAME} SHARED ${CPP_FILES} ${HPP_FILES})

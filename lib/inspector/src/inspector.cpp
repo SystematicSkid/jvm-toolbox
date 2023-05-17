@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include "inspector.hpp"
+#include "headless.hpp"
 #include "interfaces/jvmti_interface.hpp"
 
 /* Define extern symbols */
@@ -41,6 +42,10 @@ void initialize( )
     printf( "Inspector initialized\n" );
     printf( "Initializing IPC...\n" );
     setup_ipc( );
+
+    #ifdef HEADLESS_MODE
+    inspector::headless::setup_consumer( );
+    #endif
 
     std::vector<std::unique_ptr<inspector::types::JavaClass>> classes;
     inspector::java_interface->get_loaded_classes( classes );

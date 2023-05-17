@@ -72,3 +72,113 @@ table JavaThread
     priority:int32;
     is_daemon:bool;
 }
+
+/* EVENTS */
+table OnSingleStep
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    location:long;
+}
+
+table OnBreakpoint
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    location:long;
+}
+
+table OnFieldAccess
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    location:long;
+    class:JavaClass;
+    object:JavaObject;
+    field:JavaField;
+}
+
+table OnFieldModification
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    location:long;
+    class:JavaClass;
+    object:JavaObject;
+    field:JavaField;
+    signature_type:int8;
+    new_value:long; // This can be any primitive value
+}
+
+table OnFramePop
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    was_popped_by_exception:bool;
+}
+
+table OnException
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    location:long;
+    exception:JavaObject;
+    catch_method:JavaMethod;
+    catch_location:long;
+}
+
+table OnExceptionCatch
+{
+    thread:JavaThread;
+    method:JavaMethod;
+    location:long;
+    exception:JavaObject;
+}
+
+table OnThreadStart
+{
+    thread:JavaThread;
+}
+
+table OnThreadEnd
+{
+    thread:JavaThread;
+}
+
+table OnClassLoad
+{
+    thread:JavaThread;
+    class:JavaClass;
+}
+
+table OnClassPrepare
+{
+    thread:JavaThread;
+    class:JavaClass;
+}
+
+table OnClassFileLoad
+{
+    name:string;
+    class:JavaClass;
+    loader:JavaObject;
+    bytecode:[int8];
+}
+
+table OnVMDeath
+{
+    // Not sure if there's anything to put here
+}
+
+table OnVMObjectAllocated
+{
+    thread:JavaThread;
+    object:JavaObject;
+    size:long;
+    class:JavaClass;
+}
+
+table OnVMObjectFree
+{
+    tag:long;
+}

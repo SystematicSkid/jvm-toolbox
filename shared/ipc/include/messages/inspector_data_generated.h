@@ -37,6 +37,51 @@ struct JavaStackFrameBuilder;
 struct JavaThread;
 struct JavaThreadBuilder;
 
+struct OnSingleStep;
+struct OnSingleStepBuilder;
+
+struct OnBreakpoint;
+struct OnBreakpointBuilder;
+
+struct OnFieldAccess;
+struct OnFieldAccessBuilder;
+
+struct OnFieldModification;
+struct OnFieldModificationBuilder;
+
+struct OnFramePop;
+struct OnFramePopBuilder;
+
+struct OnException;
+struct OnExceptionBuilder;
+
+struct OnExceptionCatch;
+struct OnExceptionCatchBuilder;
+
+struct OnThreadStart;
+struct OnThreadStartBuilder;
+
+struct OnThreadEnd;
+struct OnThreadEndBuilder;
+
+struct OnClassLoad;
+struct OnClassLoadBuilder;
+
+struct OnClassPrepare;
+struct OnClassPrepareBuilder;
+
+struct OnClassFileLoad;
+struct OnClassFileLoadBuilder;
+
+struct OnVMDeath;
+struct OnVMDeathBuilder;
+
+struct OnVMObjectAllocated;
+struct OnVMObjectAllocatedBuilder;
+
+struct OnVMObjectFree;
+struct OnVMObjectFreeBuilder;
+
 struct LineData FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef LineDataBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -823,6 +868,1001 @@ inline ::flatbuffers::Offset<JavaThread> CreateJavaThreadDirect(
       name__,
       priority,
       is_daemon);
+}
+
+struct OnSingleStep FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnSingleStepBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_LOCATION = 8
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  int64_t location() const {
+    return GetField<int64_t>(VT_LOCATION, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<int64_t>(verifier, VT_LOCATION, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnSingleStepBuilder {
+  typedef OnSingleStep Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnSingleStep::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnSingleStep::VT_METHOD, method);
+  }
+  void add_location(int64_t location) {
+    fbb_.AddElement<int64_t>(OnSingleStep::VT_LOCATION, location, 0);
+  }
+  explicit OnSingleStepBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnSingleStep> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnSingleStep>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnSingleStep> CreateOnSingleStep(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    int64_t location = 0) {
+  OnSingleStepBuilder builder_(_fbb);
+  builder_.add_location(location);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnBreakpoint FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnBreakpointBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_LOCATION = 8
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  int64_t location() const {
+    return GetField<int64_t>(VT_LOCATION, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<int64_t>(verifier, VT_LOCATION, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnBreakpointBuilder {
+  typedef OnBreakpoint Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnBreakpoint::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnBreakpoint::VT_METHOD, method);
+  }
+  void add_location(int64_t location) {
+    fbb_.AddElement<int64_t>(OnBreakpoint::VT_LOCATION, location, 0);
+  }
+  explicit OnBreakpointBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnBreakpoint> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnBreakpoint>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnBreakpoint> CreateOnBreakpoint(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    int64_t location = 0) {
+  OnBreakpointBuilder builder_(_fbb);
+  builder_.add_location(location);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnFieldAccess FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnFieldAccessBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_LOCATION = 8,
+    VT_CLASS_ = 10,
+    VT_OBJECT = 12,
+    VT_FIELD = 14
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  int64_t location() const {
+    return GetField<int64_t>(VT_LOCATION, 0);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaClass *class_() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaClass *>(VT_CLASS_);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaObject *object() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_OBJECT);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaField *field() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaField *>(VT_FIELD);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<int64_t>(verifier, VT_LOCATION, 8) &&
+           VerifyOffset(verifier, VT_CLASS_) &&
+           verifier.VerifyTable(class_()) &&
+           VerifyOffset(verifier, VT_OBJECT) &&
+           verifier.VerifyTable(object()) &&
+           VerifyOffset(verifier, VT_FIELD) &&
+           verifier.VerifyTable(field()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnFieldAccessBuilder {
+  typedef OnFieldAccess Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnFieldAccess::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnFieldAccess::VT_METHOD, method);
+  }
+  void add_location(int64_t location) {
+    fbb_.AddElement<int64_t>(OnFieldAccess::VT_LOCATION, location, 0);
+  }
+  void add_class_(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_) {
+    fbb_.AddOffset(OnFieldAccess::VT_CLASS_, class_);
+  }
+  void add_object(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> object) {
+    fbb_.AddOffset(OnFieldAccess::VT_OBJECT, object);
+  }
+  void add_field(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaField> field) {
+    fbb_.AddOffset(OnFieldAccess::VT_FIELD, field);
+  }
+  explicit OnFieldAccessBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnFieldAccess> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnFieldAccess>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnFieldAccess> CreateOnFieldAccess(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    int64_t location = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> object = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaField> field = 0) {
+  OnFieldAccessBuilder builder_(_fbb);
+  builder_.add_location(location);
+  builder_.add_field(field);
+  builder_.add_object(object);
+  builder_.add_class_(class_);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnFieldModification FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnFieldModificationBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_LOCATION = 8,
+    VT_CLASS_ = 10,
+    VT_OBJECT = 12,
+    VT_FIELD = 14,
+    VT_SIGNATURE_TYPE = 16,
+    VT_NEW_VALUE = 18
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  int64_t location() const {
+    return GetField<int64_t>(VT_LOCATION, 0);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaClass *class_() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaClass *>(VT_CLASS_);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaObject *object() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_OBJECT);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaField *field() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaField *>(VT_FIELD);
+  }
+  int8_t signature_type() const {
+    return GetField<int8_t>(VT_SIGNATURE_TYPE, 0);
+  }
+  int64_t new_value() const {
+    return GetField<int64_t>(VT_NEW_VALUE, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<int64_t>(verifier, VT_LOCATION, 8) &&
+           VerifyOffset(verifier, VT_CLASS_) &&
+           verifier.VerifyTable(class_()) &&
+           VerifyOffset(verifier, VT_OBJECT) &&
+           verifier.VerifyTable(object()) &&
+           VerifyOffset(verifier, VT_FIELD) &&
+           verifier.VerifyTable(field()) &&
+           VerifyField<int8_t>(verifier, VT_SIGNATURE_TYPE, 1) &&
+           VerifyField<int64_t>(verifier, VT_NEW_VALUE, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnFieldModificationBuilder {
+  typedef OnFieldModification Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnFieldModification::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnFieldModification::VT_METHOD, method);
+  }
+  void add_location(int64_t location) {
+    fbb_.AddElement<int64_t>(OnFieldModification::VT_LOCATION, location, 0);
+  }
+  void add_class_(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_) {
+    fbb_.AddOffset(OnFieldModification::VT_CLASS_, class_);
+  }
+  void add_object(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> object) {
+    fbb_.AddOffset(OnFieldModification::VT_OBJECT, object);
+  }
+  void add_field(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaField> field) {
+    fbb_.AddOffset(OnFieldModification::VT_FIELD, field);
+  }
+  void add_signature_type(int8_t signature_type) {
+    fbb_.AddElement<int8_t>(OnFieldModification::VT_SIGNATURE_TYPE, signature_type, 0);
+  }
+  void add_new_value(int64_t new_value) {
+    fbb_.AddElement<int64_t>(OnFieldModification::VT_NEW_VALUE, new_value, 0);
+  }
+  explicit OnFieldModificationBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnFieldModification> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnFieldModification>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnFieldModification> CreateOnFieldModification(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    int64_t location = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> object = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaField> field = 0,
+    int8_t signature_type = 0,
+    int64_t new_value = 0) {
+  OnFieldModificationBuilder builder_(_fbb);
+  builder_.add_new_value(new_value);
+  builder_.add_location(location);
+  builder_.add_field(field);
+  builder_.add_object(object);
+  builder_.add_class_(class_);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  builder_.add_signature_type(signature_type);
+  return builder_.Finish();
+}
+
+struct OnFramePop FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnFramePopBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_WAS_POPPED_BY_EXCEPTION = 8
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  bool was_popped_by_exception() const {
+    return GetField<uint8_t>(VT_WAS_POPPED_BY_EXCEPTION, 0) != 0;
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<uint8_t>(verifier, VT_WAS_POPPED_BY_EXCEPTION, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnFramePopBuilder {
+  typedef OnFramePop Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnFramePop::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnFramePop::VT_METHOD, method);
+  }
+  void add_was_popped_by_exception(bool was_popped_by_exception) {
+    fbb_.AddElement<uint8_t>(OnFramePop::VT_WAS_POPPED_BY_EXCEPTION, static_cast<uint8_t>(was_popped_by_exception), 0);
+  }
+  explicit OnFramePopBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnFramePop> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnFramePop>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnFramePop> CreateOnFramePop(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    bool was_popped_by_exception = false) {
+  OnFramePopBuilder builder_(_fbb);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  builder_.add_was_popped_by_exception(was_popped_by_exception);
+  return builder_.Finish();
+}
+
+struct OnException FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnExceptionBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_LOCATION = 8,
+    VT_EXCEPTION = 10,
+    VT_CATCH_METHOD = 12,
+    VT_CATCH_LOCATION = 14
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  int64_t location() const {
+    return GetField<int64_t>(VT_LOCATION, 0);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaObject *exception() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_EXCEPTION);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *catch_method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_CATCH_METHOD);
+  }
+  int64_t catch_location() const {
+    return GetField<int64_t>(VT_CATCH_LOCATION, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<int64_t>(verifier, VT_LOCATION, 8) &&
+           VerifyOffset(verifier, VT_EXCEPTION) &&
+           verifier.VerifyTable(exception()) &&
+           VerifyOffset(verifier, VT_CATCH_METHOD) &&
+           verifier.VerifyTable(catch_method()) &&
+           VerifyField<int64_t>(verifier, VT_CATCH_LOCATION, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnExceptionBuilder {
+  typedef OnException Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnException::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnException::VT_METHOD, method);
+  }
+  void add_location(int64_t location) {
+    fbb_.AddElement<int64_t>(OnException::VT_LOCATION, location, 0);
+  }
+  void add_exception(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> exception) {
+    fbb_.AddOffset(OnException::VT_EXCEPTION, exception);
+  }
+  void add_catch_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> catch_method) {
+    fbb_.AddOffset(OnException::VT_CATCH_METHOD, catch_method);
+  }
+  void add_catch_location(int64_t catch_location) {
+    fbb_.AddElement<int64_t>(OnException::VT_CATCH_LOCATION, catch_location, 0);
+  }
+  explicit OnExceptionBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnException> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnException>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnException> CreateOnException(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    int64_t location = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> exception = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> catch_method = 0,
+    int64_t catch_location = 0) {
+  OnExceptionBuilder builder_(_fbb);
+  builder_.add_catch_location(catch_location);
+  builder_.add_location(location);
+  builder_.add_catch_method(catch_method);
+  builder_.add_exception(exception);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnExceptionCatch FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnExceptionCatchBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_METHOD = 6,
+    VT_LOCATION = 8,
+    VT_EXCEPTION = 10
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaMethod *method() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaMethod *>(VT_METHOD);
+  }
+  int64_t location() const {
+    return GetField<int64_t>(VT_LOCATION, 0);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaObject *exception() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_EXCEPTION);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_METHOD) &&
+           verifier.VerifyTable(method()) &&
+           VerifyField<int64_t>(verifier, VT_LOCATION, 8) &&
+           VerifyOffset(verifier, VT_EXCEPTION) &&
+           verifier.VerifyTable(exception()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnExceptionCatchBuilder {
+  typedef OnExceptionCatch Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnExceptionCatch::VT_THREAD, thread);
+  }
+  void add_method(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method) {
+    fbb_.AddOffset(OnExceptionCatch::VT_METHOD, method);
+  }
+  void add_location(int64_t location) {
+    fbb_.AddElement<int64_t>(OnExceptionCatch::VT_LOCATION, location, 0);
+  }
+  void add_exception(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> exception) {
+    fbb_.AddOffset(OnExceptionCatch::VT_EXCEPTION, exception);
+  }
+  explicit OnExceptionCatchBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnExceptionCatch> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnExceptionCatch>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnExceptionCatch> CreateOnExceptionCatch(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaMethod> method = 0,
+    int64_t location = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> exception = 0) {
+  OnExceptionCatchBuilder builder_(_fbb);
+  builder_.add_location(location);
+  builder_.add_exception(exception);
+  builder_.add_method(method);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnThreadStart FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnThreadStartBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnThreadStartBuilder {
+  typedef OnThreadStart Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnThreadStart::VT_THREAD, thread);
+  }
+  explicit OnThreadStartBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnThreadStart> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnThreadStart>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnThreadStart> CreateOnThreadStart(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0) {
+  OnThreadStartBuilder builder_(_fbb);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnThreadEnd FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnThreadEndBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnThreadEndBuilder {
+  typedef OnThreadEnd Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnThreadEnd::VT_THREAD, thread);
+  }
+  explicit OnThreadEndBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnThreadEnd> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnThreadEnd>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnThreadEnd> CreateOnThreadEnd(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0) {
+  OnThreadEndBuilder builder_(_fbb);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnClassLoad FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnClassLoadBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_CLASS_ = 6
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaClass *class_() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaClass *>(VT_CLASS_);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_CLASS_) &&
+           verifier.VerifyTable(class_()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnClassLoadBuilder {
+  typedef OnClassLoad Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnClassLoad::VT_THREAD, thread);
+  }
+  void add_class_(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_) {
+    fbb_.AddOffset(OnClassLoad::VT_CLASS_, class_);
+  }
+  explicit OnClassLoadBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnClassLoad> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnClassLoad>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnClassLoad> CreateOnClassLoad(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0) {
+  OnClassLoadBuilder builder_(_fbb);
+  builder_.add_class_(class_);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnClassPrepare FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnClassPrepareBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_CLASS_ = 6
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaClass *class_() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaClass *>(VT_CLASS_);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_CLASS_) &&
+           verifier.VerifyTable(class_()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnClassPrepareBuilder {
+  typedef OnClassPrepare Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnClassPrepare::VT_THREAD, thread);
+  }
+  void add_class_(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_) {
+    fbb_.AddOffset(OnClassPrepare::VT_CLASS_, class_);
+  }
+  explicit OnClassPrepareBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnClassPrepare> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnClassPrepare>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnClassPrepare> CreateOnClassPrepare(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0) {
+  OnClassPrepareBuilder builder_(_fbb);
+  builder_.add_class_(class_);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnClassFileLoad FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnClassFileLoadBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_NAME = 4,
+    VT_CLASS_ = 6,
+    VT_LOADER = 8,
+    VT_BYTECODE = 10
+  };
+  const ::flatbuffers::String *name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_NAME);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaClass *class_() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaClass *>(VT_CLASS_);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaObject *loader() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_LOADER);
+  }
+  const ::flatbuffers::Vector<int8_t> *bytecode() const {
+    return GetPointer<const ::flatbuffers::Vector<int8_t> *>(VT_BYTECODE);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
+           VerifyOffset(verifier, VT_CLASS_) &&
+           verifier.VerifyTable(class_()) &&
+           VerifyOffset(verifier, VT_LOADER) &&
+           verifier.VerifyTable(loader()) &&
+           VerifyOffset(verifier, VT_BYTECODE) &&
+           verifier.VerifyVector(bytecode()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnClassFileLoadBuilder {
+  typedef OnClassFileLoad Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_name(::flatbuffers::Offset<::flatbuffers::String> name) {
+    fbb_.AddOffset(OnClassFileLoad::VT_NAME, name);
+  }
+  void add_class_(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_) {
+    fbb_.AddOffset(OnClassFileLoad::VT_CLASS_, class_);
+  }
+  void add_loader(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> loader) {
+    fbb_.AddOffset(OnClassFileLoad::VT_LOADER, loader);
+  }
+  void add_bytecode(::flatbuffers::Offset<::flatbuffers::Vector<int8_t>> bytecode) {
+    fbb_.AddOffset(OnClassFileLoad::VT_BYTECODE, bytecode);
+  }
+  explicit OnClassFileLoadBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnClassFileLoad> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnClassFileLoad>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnClassFileLoad> CreateOnClassFileLoad(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<::flatbuffers::String> name = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> loader = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<int8_t>> bytecode = 0) {
+  OnClassFileLoadBuilder builder_(_fbb);
+  builder_.add_bytecode(bytecode);
+  builder_.add_loader(loader);
+  builder_.add_class_(class_);
+  builder_.add_name(name);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<OnClassFileLoad> CreateOnClassFileLoadDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const char *name = nullptr,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> loader = 0,
+    const std::vector<int8_t> *bytecode = nullptr) {
+  auto name__ = name ? _fbb.CreateString(name) : 0;
+  auto bytecode__ = bytecode ? _fbb.CreateVector<int8_t>(*bytecode) : 0;
+  return jvm_toolbox_flatbuffers::inspector::CreateOnClassFileLoad(
+      _fbb,
+      name__,
+      class_,
+      loader,
+      bytecode__);
+}
+
+struct OnVMDeath FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnVMDeathBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnVMDeathBuilder {
+  typedef OnVMDeath Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit OnVMDeathBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnVMDeath> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnVMDeath>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnVMDeath> CreateOnVMDeath(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  OnVMDeathBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct OnVMObjectAllocated FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnVMObjectAllocatedBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_THREAD = 4,
+    VT_OBJECT = 6,
+    VT_SIZE = 8,
+    VT_CLASS_ = 10
+  };
+  const jvm_toolbox_flatbuffers::inspector::JavaThread *thread() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaThread *>(VT_THREAD);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaObject *object() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaObject *>(VT_OBJECT);
+  }
+  int64_t size() const {
+    return GetField<int64_t>(VT_SIZE, 0);
+  }
+  const jvm_toolbox_flatbuffers::inspector::JavaClass *class_() const {
+    return GetPointer<const jvm_toolbox_flatbuffers::inspector::JavaClass *>(VT_CLASS_);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_THREAD) &&
+           verifier.VerifyTable(thread()) &&
+           VerifyOffset(verifier, VT_OBJECT) &&
+           verifier.VerifyTable(object()) &&
+           VerifyField<int64_t>(verifier, VT_SIZE, 8) &&
+           VerifyOffset(verifier, VT_CLASS_) &&
+           verifier.VerifyTable(class_()) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnVMObjectAllocatedBuilder {
+  typedef OnVMObjectAllocated Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_thread(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread) {
+    fbb_.AddOffset(OnVMObjectAllocated::VT_THREAD, thread);
+  }
+  void add_object(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> object) {
+    fbb_.AddOffset(OnVMObjectAllocated::VT_OBJECT, object);
+  }
+  void add_size(int64_t size) {
+    fbb_.AddElement<int64_t>(OnVMObjectAllocated::VT_SIZE, size, 0);
+  }
+  void add_class_(::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_) {
+    fbb_.AddOffset(OnVMObjectAllocated::VT_CLASS_, class_);
+  }
+  explicit OnVMObjectAllocatedBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnVMObjectAllocated> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnVMObjectAllocated>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnVMObjectAllocated> CreateOnVMObjectAllocated(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaThread> thread = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaObject> object = 0,
+    int64_t size = 0,
+    ::flatbuffers::Offset<jvm_toolbox_flatbuffers::inspector::JavaClass> class_ = 0) {
+  OnVMObjectAllocatedBuilder builder_(_fbb);
+  builder_.add_size(size);
+  builder_.add_class_(class_);
+  builder_.add_object(object);
+  builder_.add_thread(thread);
+  return builder_.Finish();
+}
+
+struct OnVMObjectFree FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef OnVMObjectFreeBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TAG = 4
+  };
+  int64_t tag() const {
+    return GetField<int64_t>(VT_TAG, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int64_t>(verifier, VT_TAG, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct OnVMObjectFreeBuilder {
+  typedef OnVMObjectFree Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_tag(int64_t tag) {
+    fbb_.AddElement<int64_t>(OnVMObjectFree::VT_TAG, tag, 0);
+  }
+  explicit OnVMObjectFreeBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<OnVMObjectFree> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<OnVMObjectFree>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<OnVMObjectFree> CreateOnVMObjectFree(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t tag = 0) {
+  OnVMObjectFreeBuilder builder_(_fbb);
+  builder_.add_tag(tag);
+  return builder_.Finish();
 }
 
 }  // namespace inspector
