@@ -65,6 +65,7 @@ void inspector::events::ClassFileLoadEvent::class_file_load_hook(
     std::int32_t *new_class_data_len, 
     std::uint8_t **new_class_data)
 {
+    printf( "Class file load event.\n" );
     /* Create our flatbuffer object */
     flatbuffers::FlatBufferBuilder builder;
     jvm_toolbox_flatbuffers::inspector::OnClassFileLoadBuilder packet( builder );
