@@ -27,7 +27,12 @@ namespace ipc
             std::memcpy( buffer.data( ), &size, sizeof( size ) );
             std::memcpy( buffer.data( ) + sizeof( size ), data.data( ), size );
             /* Write data */
-            this->_shared_memory_manager->write( 0, buffer.data( ), buffer.size( ) );
+            std::size_t total_message_size = this->_shared_memory_manager->get_total_message_size( );
+            if( total_message_size + buffer.size( ) > this->_shared_memory_manager->size( ) )
+            {
+                throw std::runtime_error("Message size exceeds shared memory size.");
+            }
+            this->_shared_memory_manager->write( total_message_size, buffer.data( ), buffer.size( ) );
             _condition_variable.notify_one( );
         }
         

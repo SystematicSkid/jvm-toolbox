@@ -6,9 +6,9 @@
 #include <string>
 #include "ipc/include/messages/inspector_data_generated.h"
 
-bool inspector::events::ClassFileLoadEvent::setup( std::unique_ptr<inspector::interfaces::JavaInterface> java_interface )
+bool inspector::events::ClassFileLoadEvent::setup( inspector::interfaces::JavaInterface* java_interface )
 {
-    _java_interface = std::move( java_interface );
+    _java_interface = java_interface;
     return true;
 }
 
@@ -17,7 +17,6 @@ bool inspector::events::ClassFileLoadEvent::enable()
     /* Ensure we have an inspector interface setup */
     if ( !_java_interface )
         return false;
-
     /* Enable our event */
     if ( !_java_interface->set_class_file_load_event( class_file_load_hook ) )
     {
@@ -66,6 +65,7 @@ void inspector::events::ClassFileLoadEvent::class_file_load_hook(
     std::uint8_t **new_class_data)
 {
     printf( "Class file load event.\n" );
+    printf( "\tName: %s\n", name );
     /* Create our flatbuffer object */
     flatbuffers::FlatBufferBuilder builder;
     jvm_toolbox_flatbuffers::inspector::OnClassFileLoadBuilder packet( builder );
@@ -77,7 +77,7 @@ void inspector::events::ClassFileLoadEvent::class_file_load_hook(
 
     /* Create our message */
     std::vector<unsigned char> message( builder.GetBufferPointer( ), builder.GetBufferPointer( ) + builder.GetSize( ) );
-
+    printf("Builder size: %d\n", builder.GetSize());
     /* Produce our message */
     inspector::producer->produce( message );
 }

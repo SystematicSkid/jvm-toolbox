@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     /* Wait for 'is_injected' */
     while (!is_injected.load(std::memory_order_acquire))
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
     std::cout << "DLL Injected successfully\n";

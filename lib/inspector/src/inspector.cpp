@@ -43,28 +43,28 @@ void initialize( )
     printf( "Initializing IPC...\n" );
     setup_ipc( );
 
-    #ifdef HEADLESS_MODE
+    std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+
+    #ifndef HEADLESS_MODE
     inspector::headless::setup_consumer( );
     #endif
 
-    printf( "Initializing event manager...\n" );
-    auto* class_file_load_event = inspector::events::EventManager::get()
-        ->get_event<inspector::events::ClassFileLoadEvent>( );
+    auto class_file_load_event = std::make_unique<inspector::events::ClassFileLoadEvent>( );
 
     if( !class_file_load_event )
     {
         printf( "Failed to get class file load event.\n" );
         return;
     }
+    class_file_load_event->setup( inspector::java_interface.get( ) );
 
-    class_file_load_event->setup( std::move( inspector::java_interface ) );
     if( !class_file_load_event->enable( ) )
     {
         printf( "Failed to enable class file load event.\n" );
         return;
     }
 
-
+    printf( "Class file load event enabled.\n" );
 
     std::vector<std::unique_ptr<inspector::types::JavaClass>> classes;
     inspector::java_interface->get_loaded_classes( classes );

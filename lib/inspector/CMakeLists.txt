@@ -37,7 +37,7 @@ file(GLOB_RECURSE HPP_FILES src/*.hpp)
 file(GLOB_RECURSE CPP_FILES src/*.cpp)
 
 if(NOT HEADLESS_MODE)
-    list(REMOVE_ITEM CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/headless.cpp")
+    #list(REMOVE_ITEM CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/headless.cpp")
 endif()
 
 # specify that these files should be compiled to create an executable

@@ -7,9 +7,9 @@ namespace inspector::events
     class ClassFileLoadEvent : public BaseEvent
     {
     private:
-        std::unique_ptr<inspector::interfaces::JavaInterface> _java_interface;
+        inspector::interfaces::JavaInterface* _java_interface;
     public:
-        bool setup( std::unique_ptr<inspector::interfaces::JavaInterface> java_interface ) override;
+        bool setup( inspector::interfaces::JavaInterface* java_interface ) override;
         std::string get_name( ) override { return "ClassFileLoadEvent"; }
         bool enable( ) override;
         bool disable( ) override;

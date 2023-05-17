@@ -503,7 +503,7 @@ bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<std:
 {
     jint class_count = 0;
     jclass* class_ptr = nullptr;
-
+    
     /* Get all loaded classes via jvmti */
     jvmtiError error = this->_jvmti_env->GetLoadedClasses( &class_count, &class_ptr );
     /* Error handling */
@@ -519,7 +519,7 @@ bool inspector::interfaces::JvmtiInterface::get_loaded_classes( std::vector<std:
     {
         classes.emplace_back( std::make_unique<inspector::types::JavaClass>( class_ptr[i] ) );
     }
-    
+
     /* Deallocate memory */
     this->_jvmti_env->Deallocate( reinterpret_cast<unsigned char*>( class_ptr ) );
 
@@ -1500,7 +1500,6 @@ bool inspector::interfaces::JvmtiInterface::set_class_file_load_event( void* cal
         this->set_last_error( error );
         return false;
     }
-
     /* Get current capabilities */
     jvmtiCapabilities capabilities;
     jvmtiError error = this->_jvmti_env->GetCapabilities( &capabilities );

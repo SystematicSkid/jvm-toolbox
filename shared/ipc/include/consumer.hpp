@@ -49,8 +49,8 @@ namespace ipc
             //std::memcpy( &size, buffer.data( ), sizeof( size ) );
             std::vector<unsigned char> data( buffer.begin( ) + sizeof( size ), buffer.end( ) );
             // Consume the data by clearing the shared memory
-            std::fill( buffer.begin( ), buffer.end( ), 0 );
-            this->_shared_memory_manager->write( 0, buffer.data( ), buffer.size( ) );
+            //std::fill( buffer.begin( ), buffer.end( ), 0 );
+            this->_shared_memory_manager->pop( );
             return data;
 
         }
